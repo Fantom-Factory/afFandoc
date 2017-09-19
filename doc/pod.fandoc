@@ -1,0 +1,25 @@
+Overview
+********
+Alternative Fandoc writers and parsers.
+
+
+
+Quick Start
+***********
+pre>
+syntax: fantom
+
+using afFandoc
+
+class Example {
+    Void main() {
+        ...
+    }
+}
+<pre
+
+
+
+Usage
+*****
+
