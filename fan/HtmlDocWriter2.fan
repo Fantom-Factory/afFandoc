@@ -14,7 +14,8 @@ class HtmlDocWriter2 : DocWriter2 {
 	DocNodeId:Str			cssClasses			:= DocNodeId:Str[:] { it.def = "" }
 	Str:PreTextProcessor	preTextProcessors	:= Str:PreTextProcessor[:]
 	LinkResolver[]			linkResolvers		:= LinkResolver[,]
-	@NoDoc Bool				invalidLink
+	private Bool			invalidLink
+	@NoDoc Str				invalidLinkClass	:= "invalidLink"
 	
 	static HtmlDocWriter2 original() {
 		HtmlDocWriter2() {
@@ -28,9 +29,10 @@ class HtmlDocWriter2 : DocWriter2 {
 		HtmlDocWriter2() {
 			it.linkResolvers = [
 				LinkResolver.schemePassThroughResolver,
+				LinkResolver.pathAbsPassThroughResolver,
 				LinkResolver.idPassThroughResolver,
-				LinkResolver.passThroughResolver,
 				FandocLinkResolver(),
+				LinkResolver.passThroughResolver,
 			]
 			it.preTextProcessors["table" ] = TablePreProcessor()
 			it.preTextProcessors["syntax"] = SyntaxPreProcessor()
@@ -124,7 +126,7 @@ class HtmlDocWriter2 : DocWriter2 {
 		cssClass := cssClasses[elem.id] ?: ""
 		if (invalidLink) {
 			invalidLink = false
-			cssClass += " invalidLink"
+			cssClass += " ${invalidLinkClass}"
 		}
 
 		switch (elem.id) {
