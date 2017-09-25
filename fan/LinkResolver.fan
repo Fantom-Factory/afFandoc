@@ -1,5 +1,6 @@
 using fandoc::DocElem
 
+@Js
 mixin LinkResolver {
 
 	abstract Uri? resolve(DocElem elem, Str? scheme, Uri url)

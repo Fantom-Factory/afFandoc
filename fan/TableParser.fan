@@ -1,4 +1,5 @@
 
+@Js
 const class TableParser {
 	
 	Str[][] parseTable(Str[] lines) {
