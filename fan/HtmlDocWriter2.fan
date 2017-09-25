@@ -9,6 +9,7 @@ using fandoc
 **   renderBody()
 **     renderPreBody()
 ** <pre
+@Js
 class HtmlDocWriter2 : DocWriter2 {
 	
 	DocNodeId:Str			cssClasses			:= DocNodeId:Str[:] { it.def = "" }
@@ -35,7 +36,8 @@ class HtmlDocWriter2 : DocWriter2 {
 				LinkResolver.passThroughResolver,
 			]
 			it.preTextProcessors["table" ] = TablePreProcessor()
-			it.preTextProcessors["syntax"] = SyntaxPreProcessor()
+			if (Env.cur.runtime != "js")
+				it.preTextProcessors["syntax"] = SyntaxPreProcessor()
 		}
 	}
 	

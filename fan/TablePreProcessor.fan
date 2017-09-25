@@ -2,6 +2,7 @@ using fandoc::DocElem
 using fandoc::DocWriter
 using fandoc::FandocParser
 
+@Js
 class TablePreProcessor : PreTextProcessor {	
 	private TableParser tableParser		:= TableParser()
 

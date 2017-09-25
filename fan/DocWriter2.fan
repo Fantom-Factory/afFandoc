@@ -6,6 +6,7 @@ using fandoc::DocWriter
 using fandoc::FandocParser
 
 ** An intelligent DocWriter that has context.
+@Js
 abstract class DocWriter2 : DocWriter {
 
 	private Str?			output
@@ -61,6 +62,7 @@ abstract class DocWriter2 : DocWriter {
 	Str result() { output }
 }
 
+@Js
 internal class DocWriterNode {
 	DocElem		elem
 	StrBuf		buf		:= StrBuf()
