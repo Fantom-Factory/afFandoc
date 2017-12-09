@@ -9,6 +9,8 @@ using fandoc::FandocParser
 @Js
 abstract class DocWriter2 : DocWriter {
 
+	// TODO don't extend DocWriter
+	
 	private Str?			output
 	private DocWriterNode[]	elemStack	:= DocWriterNode[,]
 	
@@ -45,11 +47,13 @@ abstract class DocWriter2 : DocWriter {
 		node.out.print(escapeText(node.elem, docText.str))
 	}
 	
+	// TODO make static
 	Str writeToStr(DocNode node) {
 		node.write(this)
 		return output
 	}
 	
+	// TODO make static
 	Str parseAndWriteToStr(Str fandoc) {
 		doc := FandocParser() { it.parseHeader = false }.parseStr(fandoc)
 		return writeToStr(doc)
