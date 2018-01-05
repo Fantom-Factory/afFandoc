@@ -102,6 +102,13 @@ class HtmlDocWriter2 : DocWriter2 {
 				image := (Image) elem
 				attr(out, "src", resolveLink(elem, image.uri) ?: image.uri)
 				attr(out, "alt", image.alt)
+				if (image.size != null) {
+					sizes := image.size.split('x')
+					if (sizes.getSafe(0)?.trimToNull != null)
+						attr(out, "width", sizes[0])
+					if (sizes.getSafe(1)?.trimToNull != null)
+						attr(out, "height", sizes[1])
+				}
 
 			case DocNodeId.link:
 				link := (Link) elem
