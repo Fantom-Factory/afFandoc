@@ -54,6 +54,11 @@ class TestHtmlDocWriter : Test {
 		verifyEq(out, "<pre>axonatorKey = &lt;secretKey></pre>")		
 	}
 
+	Void testImagesAndText() {
+		out := write("![alt text]`http://href/`\n\nSome text\n")
+		verifyEq(out, "<p><img src=\"http://href/\" alt=\"alt text\"/></p><p>Some text</p>")
+	}
+	
 	override Void setup() {
 		dw2 = HtmlDocWriter2.original
 	}
