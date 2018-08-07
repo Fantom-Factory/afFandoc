@@ -55,7 +55,8 @@ abstract class DocWriter2 : DocWriter {
 	
 	// TODO make static
 	Str parseAndWriteToStr(Str fandoc) {
-		doc := FandocParser() { it.parseHeader = false }.parseStr(fandoc)
+		// auto-detect headers - no legal fandoc should start with ***** unless it's a header!
+		doc := FandocParser() { it.parseHeader = fandoc.trimStart.startsWith("*****") }.parseStr(fandoc)
 		return writeToStr(doc)
 	}
 	
