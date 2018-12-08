@@ -7,12 +7,38 @@ using fandoc::FandocParser
 
 ** An intelligent DocWriter that has context.
 @Js
-abstract class DocWriter2 : DocWriter {
-
-	// TODO don't extend DocWriter
+abstract class DocWriter2 {
 	
-	private Str?			output
-	private DocWriterNode[]	elemStack	:= DocWriterNode[,]
+	Str writeToStr(DocElem elem) {
+		impl := DocWriterImpl(this)
+		if (elem is Doc)
+			impl.docStart(elem)
+		elem.write(impl)
+		if (elem is Doc)
+			impl.docEnd(elem)
+		return impl.output
+	}
+
+	Str parseAndWriteToStr(Str fandoc) {
+		// auto-detect headers - no legal fandoc should start with ***** unless it's a header!
+		doc := FandocParser() { it.parseHeader = fandoc.trimStart.startsWith("*****") }.parseStr(fandoc)
+		return writeToStr(doc)
+	}
+	
+	abstract Void render(OutStream out, DocElem elem, Str innerText)
+
+	virtual Str escapeText(DocElem elem, Str text) { text }
+}
+
+@Js
+internal class DocWriterImpl : DocWriter {
+	internal Str?				output
+	private  DocWriterNode[]	elemStack	:= DocWriterNode[,]
+	private  DocWriter2			docWriter2
+	
+	new make(DocWriter2 docWriter2) {
+		this.docWriter2 = docWriter2
+	}
 	
 	@NoDoc
 	override Void docStart(Doc doc) { }
@@ -38,33 +64,14 @@ abstract class DocWriter2 : DocWriter {
 		if (out == null)
 			output = pop.buf.toStr
 		else
-			render(out, elem, pop.buf.toStr)
+			docWriter2.render(out, elem, pop.buf.toStr)
 	}
 
 	@NoDoc
 	override Void text(DocText docText) {
 		node := elemStack.peek
-		node.out.print(escapeText(node.elem, docText.str))
-	}
-	
-	// TODO make static
-	Str writeToStr(DocNode node) {
-		node.write(this)
-		return output
-	}
-	
-	// TODO make static
-	Str parseAndWriteToStr(Str fandoc) {
-		// auto-detect headers - no legal fandoc should start with ***** unless it's a header!
-		doc := FandocParser() { it.parseHeader = fandoc.trimStart.startsWith("*****") }.parseStr(fandoc)
-		return writeToStr(doc)
-	}
-	
-	abstract Void render(OutStream out, DocElem elem, Str innerText)
-
-	virtual Str escapeText(DocElem elem, Str text) { text }
-	
-	Str result() { output }
+		node.out.print(docWriter2.escapeText(node.elem, docText.str))
+	}	
 }
 
 @Js

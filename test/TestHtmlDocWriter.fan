@@ -4,6 +4,8 @@ class TestHtmlDocWriter : Test {
 	
 	private HtmlDocWriter2? dw2
 	
+
+	
 	// --- test old functionality ----
 
 	Void testBasic() {
@@ -31,6 +33,8 @@ class TestHtmlDocWriter : Test {
 		verifyEq(out, "<ol style=\"list-style-type: decimal\"><li>Dude</li><li>Sweet</li></ol>")
 	}
 
+	
+	
 	// --- test new functionality ----
 	
 	Void testIdsForHeadingAlwaysRendered() {
@@ -59,13 +63,14 @@ class TestHtmlDocWriter : Test {
 		verifyEq(out, "<p><img src=\"http://href/\" alt=\"alt text\"/></p><p>Some text</p>")
 	}
 	
+	// --------
+	
 	override Void setup() {
 		dw2 = HtmlDocWriter2.original
 	}
 	
 	private Str write(Str fandoc) {
 		doc := FandocParser().parseStr(fandoc)
-		doc.write(dw2)
-		return dw2.result.replace("\n", "")
+		return dw2.writeToStr(doc).replace("\n", "")
 	}
 }
