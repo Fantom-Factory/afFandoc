@@ -1,6 +1,10 @@
 Overview
 ********
-Alternative Fandoc writers and parsers.
+Alternative and extensible Fandoc writers that provide intelligent context.
+
+'<pre>' blocks are parsed, providing syntax highlighting for code, and table rendering.
+
+Hooks are provided to resolve link and image URLs so invalid links may be highlighted.
 
 
 
@@ -9,17 +13,108 @@ Quick Start
 pre>
 syntax: fantom
 
-using afFandoc
+using afFandoc::HtmlDocWriter
 
 class Example {
     Void main() {
-        ...
+        fandoc := "..."
+
+        html := HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc)
+
+        echo(html)  // --> <html> ... </html>
     }
 }
 <pre
 
+Syntax Hightlighting
+********************
+Preformatted text may have syntax highlighting applied (courtesy of the core [syntax]`syntax::index` pod). Simply prefix the 'pre' text with:
+
+  syntax: fandoc
+  syntax: XXXX
+
+Where 'XXXX' is the name of the syntax to use. Example:
 
 
-Usage
-*****
+  syntax: fandoc
+  pre>
+  syntax: fantom
+
+  class Example {
+     Void main() {
+         echo("Hello Mum!")
+     }
+  }
+  <pre
+
+
+Common syntaxes include:
+
+ - 'csharp'
+ - 'css'
+ - 'fantom'
+ - 'html'
+ - 'java'
+ - 'javascript'
+ - 'xml'
+
+For a full list of default supported styles, look in the Fantom installation at the files under '%FAN_HOME%\etc\syntax\'
+
+
+Table Rendering
+***************
+To render a HTML table, use preformatted text with 'table:' as the first line.
+
+Table parsing is simple, but expressive. The first line to start with a '-' character defines where the column boundaries are. All lines before are table headers, all lines after are table data.
+
+Example:
+
+  syntax: fandoc
+  pre>
+  table:
+
+  Full Name    First Name  Last Name
+  -----------  ----------  ---------
+  John Smith   John        Smith
+  Fred Bloggs  Fred        Bloggs
+  Steve Eynon  Steve       Eynon
+  <pre
+
+
+Becomes:
+
+pre>
+table:
+
+Full Name    First Name  Last Name
+-----------  ----------  ---------
+John Smith   John        Smith
+Fred Bloggs  Fred        Bloggs
+Steve Eynon  Steve       Eynon
+<pre
+
+Note that any lines consisting entirely of '-' or '+' characters are ignored. This means the above table could also be written as:
+
+  syntax: fandoc
+  pre>
+  table:
+  +-------------+-------+--------+
+  |             | First | Last   |
+  | Full Name   | Name  | Name   |
+   -------------+-------+--------+
+  | John Smith  | John  | Smith  |
+  | Steve Eynon | Steve | Eynon  |
+  | Fred Bloggs | Fred  | Bloggs |
+  +-------------+-------+--------+
+  <pre
+
+
+
+Link Resolving
+**************
+Link resovlers are used by `HtmlDocWriter` to transform relative URLs and schemes (of your own design) into fully working absolute URLs. If any given link is not resolved then it is written with an 'invalidLink' CSS class, which you should then style as red, or some other appropiate colour.
+
+Some pass-through link resolvers are provided that simply return the given URL, this prevents common links from being rendered as invalid.
+
+Link resolvers let you design your own custom link formats, just like wot Fantom did with fandoc links!
 

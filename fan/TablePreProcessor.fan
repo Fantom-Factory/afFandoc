@@ -2,10 +2,12 @@ using fandoc::DocElem
 using fandoc::DocWriter
 using fandoc::FandocParser
 
+** A 'PreProcessor' for rendering tables to HTML.
 @Js
-class TablePreProcessor : PreTextProcessor {	
+class TablePreProcessor : PreProcessor {	
 	private TableParser tableParser		:= TableParser()
 
+	** Hook for rendering cell text. Just returns 'text.toXml' by default.
 	|Str->Str|	textRenderer	:= |Str text->Str| { text.toXml }
 	Str 		table			:= "<table>"
 	Str 		tableEnd		:= "</table>"
@@ -20,6 +22,7 @@ class TablePreProcessor : PreTextProcessor {
 	Str			td				:= "<td>"
 	Str			tdEnd			:= "</td>"
 	
+	@NoDoc
 	override Void process(OutStream out, DocElem elem, Uri cmd, Str preText) {
 		rows := tableParser.parseTable(preText.splitLines)
 

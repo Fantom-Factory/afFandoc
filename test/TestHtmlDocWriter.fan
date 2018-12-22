@@ -1,8 +1,9 @@
-using fandoc
+using fandoc::FandocParser
+using fandoc::DocNodeId
 
 class TestHtmlDocWriter : Test {
 	
-	private HtmlDocWriter2? dw2
+	private HtmlDocWriter? dw2
 	
 
 	
@@ -66,7 +67,7 @@ class TestHtmlDocWriter : Test {
 	// --------
 	
 	override Void setup() {
-		dw2 = HtmlDocWriter2.original
+		dw2 = HtmlDocWriter.original
 	}
 	
 	private Str write(Str fandoc) {

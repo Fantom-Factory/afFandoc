@@ -1,33 +1,31 @@
 using fandoc
+using fandoc::DocWriter 	as FDocWriter
+using fandoc::HtmlDocWriter as FHtmlDocWriter
 
-**
-** pre>
-** render()
-**   renderAttrs()
-**     resolveLink()
-**     renderClass()
-**   renderBody()
-**     renderPreBody()
-** <pre
+** A intelligent 'DocWriter' with useful method override hooks.
+** Links that cannot be resolved are rendered with an 'invalidLink' CSS class and `pre` blocks are processed 
+**  
 @Js
-class HtmlDocWriter2 : DocWriter2 {
+class HtmlDocWriter : DocWriter {
 	
-	DocNodeId:Str			cssClasses			:= DocNodeId:Str[:] { it.def = "" }
-	Str:PreTextProcessor	preTextProcessors	:= Str:PreTextProcessor[:]
-	LinkResolver[]			linkResolvers		:= LinkResolver[,]
-	private Bool			invalidLink
-	@NoDoc Str				invalidLinkClass	:= "invalidLink"
+	DocNodeId:Str		cssClasses			:= DocNodeId:Str[:] { it.def = "" }
+	Str:PreProcessor	preProcessors		:= Str:PreProcessor[:]
+	LinkResolver[]		linkResolvers		:= LinkResolver[,]
+	private Bool		invalidLink
+	@NoDoc Str			invalidLinkClass	:= "invalidLink"
 	
-	static HtmlDocWriter2 original() {
-		HtmlDocWriter2() {
+	** A simple HTML writer that mimics the original; no invalid links and no pre-block-processing.
+	static HtmlDocWriter original() {
+		HtmlDocWriter() {
 			it.linkResolvers = [
 				LinkResolver.passThroughResolver,
 			]
 		}
 	}
 	
-	static HtmlDocWriter2 fullyLoaded() {
-		HtmlDocWriter2() {
+	** A HTML writer that performs pre-block-processing for tables and syntax colouring.
+	static HtmlDocWriter fullyLoaded() {
+		HtmlDocWriter() {
 			it.linkResolvers = [
 				LinkResolver.schemePassThroughResolver,
 				LinkResolver.pathAbsPassThroughResolver,
@@ -35,12 +33,13 @@ class HtmlDocWriter2 : DocWriter2 {
 				FandocLinkResolver(),
 				LinkResolver.passThroughResolver,
 			]
-			it.preTextProcessors["table" ] = TablePreProcessor()
+			it.preProcessors["table" ] = TablePreProcessor()
 			if (Env.cur.runtime != "js")
-				it.preTextProcessors["syntax"] = SyntaxPreProcessor()
+				it.preProcessors["syntax"] = SyntaxPreProcessor()
 		}
 	}
-	
+
+	@NoDoc
 	override Void render(OutStream out, DocElem elem, Str body) {
 		if (elem.isBlock)
 			out.writeChar('\n')
@@ -54,22 +53,25 @@ class HtmlDocWriter2 : DocWriter2 {
 		}		
 	}
 	
+	** Escapes the given text to XML, unless we're inside a 'pre' block.
 	override Str escapeText(DocElem elem, Str text) {
 		elem.id == DocNodeId.pre ? text : text.toXml
 	}
-	
+
+	** Invokes a 'PreProcessor' should a matching one be found, else defaults to calling 'renderElem()'.
 	virtual Void renderPreBody(OutStream out, DocElem elem, Str body) {
 		idx		:= body.index("\n") ?: -1
 		cmdTxt	:= body[0..idx].trim
 		cmd 	:= Uri(cmdTxt, false)		
 
-		if (cmd?.scheme != null && preTextProcessors.containsKey(cmd.scheme)) {
+		if (cmd?.scheme != null && preProcessors.containsKey(cmd.scheme)) {
 			preText := body[idx..-1]
-			preTextProcessors[cmd.scheme].process(out, elem, cmd, preText)
+			preProcessors[cmd.scheme].process(out, elem, cmd, preText)
 		} else
 			renderElem(out, elem, body.toXml)
 	}
 
+	** Invokes a 'PreProcessor' should a matching one be found, else defaults to calling 'renderElem()'.
 	virtual Void renderElem(OutStream out, DocElem elem, Str body) {
 		out.writeChar('<').writeChars(elem.htmlName)
 		renderAttrs(out, elem)
@@ -121,7 +123,8 @@ class HtmlDocWriter2 : DocWriter2 {
 
 		renderClass(out, elem)
 	}
-	
+
+	** Calls the 'LinkResolvers' looking for valid links.
 	virtual Uri? resolveLink(DocElem elem, Str url) {
 		uri := Uri(url, false)
 		if (uri == null) return null
@@ -131,6 +134,7 @@ class HtmlDocWriter2 : DocWriter2 {
 		return link
 	}
 
+	** Writes out 'class' attributes for some common scenarios.
 	virtual Void renderClass(OutStream out, DocElem elem) {
 		cssClass := cssClasses[elem.id] ?: ""
 		if (invalidLink) {

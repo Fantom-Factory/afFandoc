@@ -1,7 +1,9 @@
 
+** Parses table text into a 2D array of strings.
 @Js
 const class TableParser {
-	
+
+	** Parses the table text.
 	Str[][] parseTable(Str[] lines) {
 		ctrl := (Str) (lines.find { it.trim.startsWith("-") } ?: throw ParseErr("Could not find table syntax in:\n" + lines.join("\n")))
 		

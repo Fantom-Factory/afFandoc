@@ -1,4 +1,5 @@
 using fandoc
+using fandoc::DocWriter
 
 //
 // Copyright (c) 2014, Brian Frank and Andy Frank
@@ -8,9 +9,9 @@ using fandoc
 //   5 May 14  Steve Eynon  Creation
 //
 
-** The same as the official FandocDocWriter, but with bug fixes! See "SlimerDude" comments.
+** Same as the official 'FandocDocWriter', but with bug fixes! See "SlimerDude" comments in source.
 ** 
-** FandocDocWriter outputs a fandoc model to plain text fandoc format
+** 'FandocDocWriter' outputs a fandoc model to plain text fandoc format
 **
 @Js
 class FandocDocWriter : DocWriter

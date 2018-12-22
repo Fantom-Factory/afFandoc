@@ -3,14 +3,19 @@ using syntax::SyntaxDoc
 using syntax::SyntaxRules
 using syntax::SyntaxType
 
-class SyntaxPreProcessor : PreTextProcessor {
+** A 'PreProcessor' that provides syntax highlighting for code blocks.
+** 
+** Not available in Javascript.
+class SyntaxPreProcessor : PreProcessor {
 
 	Bool renderLineIds
 	
+	** Syntax aliases.
 	Str:Str	aliases := Str:Str[
 		"fantom" : "fan"
 	]
 
+	** HTML tags to render for each syntax type.
 	SyntaxType:Str? htmlTags := [
 		SyntaxType.text		: null,
 		SyntaxType.bracket	: "b",
@@ -19,6 +24,7 @@ class SyntaxPreProcessor : PreTextProcessor {
 		SyntaxType.comment	: "s",	// don't use 'q' as wot 'SyntaxType' does; as firefox, when CTRL+C, AWAYS adds quotes around it! 
 	]
 
+	** CSS classes to be rendered with the syntax tags.
 	SyntaxType:Str? cssClasses := [
 		SyntaxType.text		: null,
 		SyntaxType.bracket	: null,
@@ -27,6 +33,7 @@ class SyntaxPreProcessor : PreTextProcessor {
 		SyntaxType.comment	: null, 
 	]
 	
+	@NoDoc
 	override Void process(OutStream out, DocElem elem, Uri cmd, Str preText) {
 		ext := cmd.pathStr.trim
 		if (aliases.containsKey(ext))

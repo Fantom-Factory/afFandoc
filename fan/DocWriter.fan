@@ -2,13 +2,14 @@ using fandoc::Doc
 using fandoc::DocElem
 using fandoc::DocNode
 using fandoc::DocText
-using fandoc::DocWriter
+using fandoc::DocWriter as FDocWriter
 using fandoc::FandocParser
 
-** An intelligent DocWriter that has context.
+** An intelligent interface that gives context to what's being written.
 @Js
-abstract class DocWriter2 {
+mixin DocWriter {
 	
+	** Writes the given elem to a string.
 	Str writeToStr(DocElem elem) {
 		impl := DocWriterImpl(this)
 		if (elem is Doc)
@@ -19,25 +20,29 @@ abstract class DocWriter2 {
 		return impl.output
 	}
 
+	** Writes the given fandoc to a string.
+	** Header properties are auto-dectected.
 	Str parseAndWriteToStr(Str fandoc) {
 		// auto-detect headers - no legal fandoc should start with ***** unless it's a header!
 		doc := FandocParser() { it.parseHeader = fandoc.trimStart.startsWith("*****") }.parseStr(fandoc)
 		return writeToStr(doc)
 	}
 	
+	** Implement to render the given elem to the 'OutStream'.
 	abstract Void render(OutStream out, DocElem elem, Str innerText)
 
+	** Override to perform text escaping.
 	virtual Str escapeText(DocElem elem, Str text) { text }
 }
 
 @Js
-internal class DocWriterImpl : DocWriter {
+internal class DocWriterImpl : FDocWriter {
 	internal Str?				output
 	private  DocWriterNode[]	elemStack	:= DocWriterNode[,]
-	private  DocWriter2			docWriter2
+	private  DocWriter			docWriter
 	
-	new make(DocWriter2 docWriter2) {
-		this.docWriter2 = docWriter2
+	new make(DocWriter docWriter) {
+		this.docWriter = docWriter
 	}
 	
 	@NoDoc
@@ -64,13 +69,13 @@ internal class DocWriterImpl : DocWriter {
 		if (out == null)
 			output = pop.buf.toStr
 		else
-			docWriter2.render(out, elem, pop.buf.toStr)
+			docWriter.render(out, elem, pop.buf.toStr)
 	}
 
 	@NoDoc
 	override Void text(DocText docText) {
 		node := elemStack.peek
-		node.out.print(docWriter2.escapeText(node.elem, docText.str))
+		node.out.print(docWriter.escapeText(node.elem, docText.str))
 	}	
 }
 
