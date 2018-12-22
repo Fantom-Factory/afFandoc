@@ -3,7 +3,7 @@ using fandoc::DocWriter 	as FDocWriter
 using fandoc::HtmlDocWriter as FHtmlDocWriter
 
 ** A intelligent 'DocWriter' with useful method override hooks.
-** Links that cannot be resolved are rendered with an 'invalidLink' CSS class and `pre` blocks are processed 
+** Links that cannot be resolved are rendered with an 'invalidLink' CSS class and 'pre' blocks are processed 
 **  
 @Js
 class HtmlDocWriter : DocWriter {
@@ -31,6 +31,7 @@ class HtmlDocWriter : DocWriter {
 				LinkResolver.pathAbsPassThroughResolver,
 				LinkResolver.idPassThroughResolver,
 				FandocLinkResolver(),
+				LinkResolver.javascriptErrorResolver,
 				LinkResolver.passThroughResolver,
 			]
 			it.preProcessors["table" ] = TablePreProcessor()
