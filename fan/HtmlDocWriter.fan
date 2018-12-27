@@ -146,8 +146,10 @@ class HtmlDocWriter : DocWriter {
 		switch (elem.id) {
 			case DocNodeId.para:
 				para := (Para) elem
-				if (para.admonition != null)
-					cssClass += " " + para.admonition.lower
+				if (para.admonition != null) {
+					admon := para.admonition.all { it.isUpper } ? para.admonition.lower : para.admonition
+					cssClass += " " + admon
+				}
 		}
 
 		if (cssClass?.trimToNull != null)
