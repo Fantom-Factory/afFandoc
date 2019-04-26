@@ -27,10 +27,10 @@ mixin LinkResolver {
 		}
 	}
 
-	** Returns a 'LinkResolver' that returns the given 'url' should it be path absolute. 
+	** Returns a 'LinkResolver' that returns the given 'url' should it be path only and path absolute. 
 	static LinkResolver pathAbsPassThroughResolver() {
 		FuncLinkResolver() |DocElem elem, Str? scheme, Uri url -> Uri?| {
-			url.isPathAbs ? url : null
+			url.isPathOnly && url.isPathAbs ? url : null
 		}
 	}
 
