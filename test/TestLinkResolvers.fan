@@ -1,8 +1,8 @@
 using fandoc::Link
 
-class TestFantomLinkResolver : Test {
+class TestLinkResolvers : Test {
 	
-	Void testLinkResolver() {
+	Void testFantomLinkResolver() {
 		linkResolver := FandocLinkResolver()
 		elem		 := Link("")
 		url			 := null as Uri
@@ -31,5 +31,23 @@ class TestFantomLinkResolver : Test {
 
 		url = linkResolver.resolve(elem, "docLang", `doclang::Methods#this`)
 		verifyEq(url, `http://fantom.org/doc/docLang/Methods#this`)
+	}
+	
+	Void testPathAbsPassThrough() {
+		linkResolver := LinkResolver.pathAbsPassThroughResolver
+		elem		 := Link("")
+		url			 := null as Uri		
+
+		url = linkResolver.resolve(elem, null, `http://example.com`)
+		verifyEq(url, null)
+
+		url = linkResolver.resolve(elem, null, `/doc/wotever`)
+		verifyEq(url, `/doc/wotever`)
+
+		url = linkResolver.resolve(elem, null, `/doc/wotever#frag`)
+		verifyEq(url, `/doc/wotever#frag`)
+
+		url = linkResolver.resolve(elem, null, `/doc/wotever?query`)
+		verifyEq(url, `/doc/wotever?query`)
 	}
 }
