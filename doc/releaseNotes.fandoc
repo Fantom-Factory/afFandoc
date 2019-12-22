@@ -1,5 +1,6 @@
 v0.0.4
 ======
+ - Chg: Moar virtual methods (override points) in 'HtmlDocWriter' for link attr rendering.
  - Bug: 'LinkResolver.pathAbsPassThroughResolver()' let through absolute URLs even if they had a scheme.
 
 v0.0.2

@@ -115,7 +115,8 @@ class HtmlDocWriter : DocWriter {
 
 			case DocNodeId.link:
 				link := (Link) elem
-				attr(out, "href", resolveLink(elem, link.uri) ?: link.uri)
+				url  := Uri(link.uri, false)
+				renderLinkAttrs(out, link, url)
 			
 			case DocNodeId.orderedList:
 				ol := (OrderedList) elem
@@ -123,6 +124,14 @@ class HtmlDocWriter : DocWriter {
 		}
 
 		renderClass(out, elem)
+	}
+	
+	virtual Void renderLinkAttrs(OutStream out, Link link, Uri? url) {
+		renderLinkHrefAttr(out, link)
+	}
+
+	virtual Void renderLinkHrefAttr(OutStream out, Link link) {
+		attr(out, "href", resolveLink(link, link.uri) ?: link.uri)
 	}
 
 	** Calls the 'LinkResolvers' looking for valid links.
