@@ -35,22 +35,21 @@ class SyntaxPreProcessor : PreProcessor {
 	
 	@NoDoc
 	override Void process(OutStream out, DocElem elem, Uri cmd, Str preText) {
-		ext := cmd.pathStr.trim
-		if (aliases.containsKey(ext))
-			ext = aliases[ext]
-
-		// trim new lines, but not spaces
-		while (preText.startsWith("\n"))
-			preText = preText[1..-1]
-		while (preText.endsWith("\n"))
-			preText = preText[0..-2]
-
-		writeSyntax(out, ext, preText)
+		writeSyntax(out, cmd.pathStr.trim, "syntax", preText)
 	}
 
-	private Void writeSyntax(OutStream out, Str extension, Str text) {
+	Void writeSyntax(OutStream out, Str extension, Str cssClasses, Str text) {
+		if (aliases.containsKey(extension))
+			extension = aliases[extension]		
+		
 		ext	:= extension.lower
-		out.print("<div class=\"syntax ${ext}\">")
+		out.print("<div class=\"${cssClasses} ${ext}\">")
+
+		// trim new lines, but not spaces
+		while (text.startsWith("\n"))
+			text = text[1..-1]
+		while (text.endsWith("\n"))
+			text = text[0..-2]
 		
 		rules := SyntaxRules.loadForExt(ext)
 		if (rules == null) {
