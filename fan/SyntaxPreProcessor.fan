@@ -41,7 +41,7 @@ class SyntaxPreProcessor : PreProcessor {
 	Void writeSyntax(OutStream out, Str extension, Str cssClasses, Str text) {
 		if (aliases.containsKey(extension))
 			extension = aliases[extension]		
-		
+
 		ext	:= extension.lower
 		out.print("<div class=\"${cssClasses} ${ext}\">")
 
@@ -50,7 +50,7 @@ class SyntaxPreProcessor : PreProcessor {
 			text = text[1..-1]
 		while (text.endsWith("\n"))
 			text = text[0..-2]
-		
+
 		rules := SyntaxRules.loadForExt(ext)
 		if (rules == null) {
 			typeof.pod.log.warn("Could not find syntax file for '${ext}'")
@@ -63,7 +63,7 @@ class SyntaxPreProcessor : PreProcessor {
 			synDoc := parserType.method("parse").callOn(parser, [text.in])
 			writeLines(out, synDoc, renderLineIds)
 		}
-		
+
 		out.print("</div>")
 	}
 	
