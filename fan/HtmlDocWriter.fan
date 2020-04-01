@@ -98,8 +98,17 @@ class HtmlDocWriter : DocWriter {
 		switch (elem.id) {
 			case DocNodeId.heading:
 				heading := (Heading) elem
-				if (heading.anchorId == null)
-					attr(out, "id", toId(heading.title))	// FIXME title
+				if (heading.anchorId == null) {
+					idStr := null
+					if (heading.children.size == 1 && heading.children.first is DocText)
+						idStr = ((DocText) heading.children.first).str
+					else {
+						tout := TextWriter()
+						heading.writeChildren(tout)
+						idStr = tout.toStr
+					}
+					attr(out, "id", toId(idStr))
+				}
 
 			case DocNodeId.image:
 				image := (Image) elem
@@ -199,3 +208,15 @@ class HtmlDocWriter : DocWriter {
 		Str.fromChars(humanName.fromDisplayName.chars.findAll { it.isAlphaNum })
 	}
 }
+
+@Js internal class TextWriter : FDocWriter {
+	private StrBuf str	:= StrBuf()
+
+	override Void docStart	(Doc doc)		{ }
+	override Void docEnd	(Doc doc)		{ }
+	override Void elemStart	(DocElem elem)	{ }
+	override Void elemEnd	(DocElem elem)	{ }
+	override Void text		(DocText text)	{ str.add(text.str) }
+	override Str toStr()	{ str.toStr }
+}
+
