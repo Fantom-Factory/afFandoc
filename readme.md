@@ -1,8 +1,8 @@
-# Fandoc v0.0.2
+# Fandoc v0.0.4
 ---
 
-[![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](http://fantom-lang.org/)
-[![pod: v0.0.2](http://img.shields.io/badge/pod-v0.0.2-yellow.svg)](http://eggbox.fantomfactory.org/pods/afFandoc)
+[![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](https://fantom-lang.org/)
+[![pod: v0.0.4](http://img.shields.io/badge/pod-v0.0.4-yellow.svg)](http://eggbox.fantomfactory.org/pods/afFandoc)
 [![Licence: ISC](http://img.shields.io/badge/licence-ISC-blue.svg)](https://choosealicense.com/licenses/isc/)
 
 ## Overview
@@ -15,43 +15,42 @@ Alternative and extensible Fandoc writers that provide intelligent context.
 
 Hooks are provided to resolve link and image URLs so invalid links may be highlighted.
 
-## Install
+## <a name="Install"></a>Install
 
 Install `Fandoc` with the Fantom Pod Manager ( [FPM](http://eggbox.fantomfactory.org/pods/afFpm) ):
 
     C:\> fpm install afFandoc
 
-Or install `Fandoc` with [fanr](http://fantom.org/doc/docFanr/Tool.html#install):
+Or install `Fandoc` with [fanr](https://fantom.org/doc/docFanr/Tool.html#install):
 
     C:\> fanr install -r http://eggbox.fantomfactory.org/fanr/ afFandoc
 
-To use in a [Fantom](http://fantom-lang.org/) project, add a dependency to `build.fan`:
+To use in a [Fantom](https://fantom-lang.org/) project, add a dependency to `build.fan`:
 
     depends = ["sys 1.0", ..., "afFandoc 0.0"]
 
-## Documentation
+## <a name="documentation"></a>Documentation
 
 Full API & fandocs are available on the [Eggbox](http://eggbox.fantomfactory.org/pods/afFandoc/) - the Fantom Pod Repository.
 
 ## Quick Start
 
-```
-using afFandoc::HtmlDocWriter
-
-class Example {
-    Void main() {
-        fandoc := "..."
-
-        html := HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc)
-
-        echo(html)  // --> <html> ... </html>
+    using afFandoc::HtmlDocWriter
+    
+    class Example {
+        Void main() {
+            fandoc := "..."
+    
+            html := HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc)
+    
+            echo(html)  // --> <html> ... </html>
+        }
     }
-}
-```
+    
 
 ## Syntax Hightlighting
 
-Preformatted text may have syntax highlighting applied (courtesy of the core [syntax](http://fantom.org/doc/syntax/index.html) pod). Simply prefix the `pre` text with:
+Preformatted text may have syntax highlighting applied (courtesy of the core [syntax](https://fantom.org/doc/syntax/index.html) pod). Simply prefix the `pre` text with:
 
     syntax: XXXX
 
@@ -69,13 +68,14 @@ Where `XXXX` is the name of the syntax to use. Example:
 
 Common syntaxes include:
 
-- `csharp`
-- `css`
-- `fantom`
-- `html`
-- `java`
-- `javascript`
-- `xml`
+* `csharp`
+* `css`
+* `fantom`
+* `html`
+* `java`
+* `javascript`
+* `xml`
+
 
 For a full list of default supported styles, look in the Fantom installation at the files under `%FAN_HOME%\etc\syntax\`
 
@@ -99,15 +99,14 @@ Example:
 
 Becomes:
 
-```
-table:
-
-Full Name    First Name  Last Name
------------  ----------  ---------
-John Smith   John        Smith
-Fred Bloggs  Fred        Bloggs
-Steve Eynon  Steve       Eynon
-```
+    table:
+    
+    Full Name    First Name  Last Name
+    -----------  ----------  ---------
+    John Smith   John        Smith
+    Fred Bloggs  Fred        Bloggs
+    Steve Eynon  Steve       Eynon
+    
 
 Note that any lines consisting entirely of `-` or `+` characters are ignored. This means the above table could also be written as:
 
