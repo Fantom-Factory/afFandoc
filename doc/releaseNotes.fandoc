@@ -1,3 +1,7 @@
+v0.0.5
+======
+ - New: 'PreProcessor.fromFn()' ctor.
+
 v0.0.4
 ======
  - Chg: Moar virtual methods (override points) in 'HtmlDocWriter' for link attr rendering.
