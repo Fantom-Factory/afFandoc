@@ -1,7 +1,7 @@
 using fandoc::DocElem
 
 ** A generic link resolver that may be customised with a function.
-@Js
+@Js @NoDoc @Deprecated { msg="Use LinkResolver.fromFn() instead" }
 class FuncLinkResolver : LinkResolver {
 	|DocElem, Str?, Uri -> Uri?| func
 	
