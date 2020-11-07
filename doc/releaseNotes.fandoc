@@ -1,4 +1,4 @@
-v0.0.5
+v0.0.6
 ======
  - New: 'PreProcessor.fromFn()' ctor.
  - New: 'LinkResolver.fromFn()' ctor, deprecated 'FuncLinkResolver'.
