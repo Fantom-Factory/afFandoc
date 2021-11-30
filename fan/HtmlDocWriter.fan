@@ -72,7 +72,7 @@ class HtmlDocWriter : DocWriter {
 			renderElem(out, elem, body.toXml)
 	}
 
-	** Invokes a 'PreProcessor' should a matching one be found, else defaults to calling 'renderElem()'.
+	** Renders the given element.
 	virtual Void renderElem(OutStream out, DocElem elem, Str body) {
 		out.writeChar('<').writeChars(elem.htmlName)
 		renderAttrs(out, elem)
