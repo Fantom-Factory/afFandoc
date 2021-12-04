@@ -12,6 +12,10 @@ mixin ElemProcessor {
 	static new fromFn(|HtmlElem -> Obj?| fn) {
 		FnElemProcessor(fn)
 	}
+	
+	static ElemProcessor cssPrefixProcessor() {
+		CssPrefixProcessor()
+	}
 }
 
 @Js

@@ -3,10 +3,16 @@ using fandoc::DocElem
 using fandoc::DocText
 using fandoc::DocNodeId
 using fandoc::DocWriter
-using fandoc
+using fandoc::Para
+using fandoc::Heading
+using fandoc::Image
+using fandoc::Link
+using fandoc::OrderedList
+using fandoc::FandocParser
+//using fandoc
 
 @Js
-class HtmlWriter2 : DocWriter { 
+class HtmlDocWriter : DocWriter { 
 	DocNodeId:Str		cssClasses			:= DocNodeId:Str[:] { it.def = "" }
 	LinkResolver[]		linkResolvers		:= LinkResolver[,]
 	ElemProcessor[]		linkProcessors		:= ElemProcessor[,]
@@ -18,17 +24,17 @@ class HtmlWriter2 : DocWriter {
 	HtmlNode?			htmlNode
 
 	** A simple HTML writer that mimics the original; no invalid links and no pre-block-processing.
-	static HtmlWriter2 original() {
-		HtmlWriter2 {
-			it.linkResolvers.add(
-				LinkResolver.passThroughResolver
-			)
+	static HtmlDocWriter original() {
+		HtmlDocWriter {
+			it.linkResolvers = [
+				LinkResolver.passThroughResolver,
+			]
 		}
 	}
 	
 	** A HTML writer that performs pre-block-processing for tables and syntax colouring.
-	static HtmlWriter2 fullyLoaded() {
-		HtmlWriter2 {
+	static HtmlDocWriter fullyLoaded() {
+		HtmlDocWriter {
 			it.linkResolvers = [
 				LinkResolver.schemePassThroughResolver,
 				LinkResolver.pathAbsPassThroughResolver,
@@ -37,7 +43,10 @@ class HtmlWriter2 : DocWriter {
 				LinkResolver.javascriptErrorResolver,
 				LinkResolver.passThroughResolver,
 			]
-			it.preProcessors["table" ] = TablePreProcessor()
+			it.paraProcessors = [
+				ElemProcessor.cssPrefixProcessor,
+			]
+			it.preProcessors["table"] = TablePreProcessor()
 			if (Env.cur.runtime != "js")
 				it.preProcessors["syntax"] = SyntaxPreProcessor()
 		}
@@ -66,6 +75,7 @@ class HtmlWriter2 : DocWriter {
 	
 	@NoDoc
 	override Void elemStart(DocElem elem) {
+		if (elem.id == DocNodeId.doc) return
 		cur := toHtmlNode(elem)
 		htmlNode?.add(cur)
 		htmlNode = cur
@@ -73,25 +83,28 @@ class HtmlWriter2 : DocWriter {
 
 	@NoDoc
 	override Void elemEnd(DocElem elem) {
+		if (elem.id == DocNodeId.doc) return
 		if (htmlNode == null) return
 
 		cur := htmlNode
 		par := htmlNode?.parent
 		res := null as Obj
 
-		switch (elem.id) {
-			case DocNodeId.para		: res = processPara(cur)
-			case DocNodeId.pre		: res = processPre(cur)
-			case DocNodeId.link		: res = processLink(cur)
-			case DocNodeId.image	: res = processImage(cur)
-		}
-		
-		if (res != null && res != cur) {
-			if (res is Str)
-				res = HtmlText(res)
-			if (res isnot HtmlNode)
-				throw UnsupportedErr("Unknown HtmlNode: ${res.typeof}")
-			cur = cur.replaceWith(res)
+		if (cur is HtmlElem) {
+			switch (elem.id) {
+				case DocNodeId.para		: res = processPara(cur)
+				case DocNodeId.pre		: res = processPre(cur)
+				case DocNodeId.link		: res = processLink(cur)
+				case DocNodeId.image	: res = processImage(cur)
+			}
+			
+			if (res != null && res != cur) {
+				if (res is Str)
+					res = HtmlText(res)
+				if (res isnot HtmlNode)
+					throw UnsupportedErr("Unknown HtmlNode: ${res.typeof}")
+				cur = cur.replaceWith(res)
+			}
 		}
 		
 		if (par == null)
@@ -102,7 +115,7 @@ class HtmlWriter2 : DocWriter {
 
 	@NoDoc
 	override Void text(DocText docText) {
-		htmlNode = HtmlText(docText.str)
+		htmlNode.elem.addText(docText.str)
 	}	
 	
 	Str toHtml() { str.toStr }
@@ -111,20 +124,15 @@ class HtmlWriter2 : DocWriter {
 
 	virtual Obj? processLink(HtmlElem elem) {
 		linkProcessors.eachWhile { it.process(elem) }
-		// ![YouTube vids][16x9]`https://www.youtube.com/embed/2SURpUQzUsE`
 	}
 
 	virtual Obj? processImage(HtmlElem elem) {
 		imageProcessors.eachWhile { it.process(elem) }
+		// ![YouTube vids][16x9]`https://www.youtube.com/embed/2SURpUQzUsE`
 	}
 	
 	virtual Obj? processPara(HtmlElem elem) {
 		paraProcessors.eachWhile { it.process(elem) }
-
-		// TODO - enableParaStlying
-		// para text to start with #id  - escape with \#not id
-		// para text to start with .css -  \.not css
-		// para text to start with .{style:here} - 
 	}
 
 	virtual Obj? processPre(HtmlElem elem) {
@@ -209,11 +217,11 @@ abstract class HtmlNode {
 	HtmlNode?	parent()	{ _parent }
 	HtmlNode[]	nodes()		{ _nodes.ro }
 	HtmlElem?	elem()		{ this is HtmlElem ? this : parent?.elem }
-	virtual Str	text()		{ _nodes.join("") { it.text } }
+	virtual Str	text()		{ _nodes.size == 1 ? _nodes.first.text : _nodes.join("") { it.text } }
 	
 	@Operator
 	This add(HtmlNode node) {
-		this.nodes.add(node)
+		this._nodes.add(node)
 		node._parent = this
 		return this
 	}
@@ -328,8 +336,7 @@ class HtmlElem : HtmlNode {
 		
 		if (nodes.isEmpty && isVoid == false)
 			out.writeChar('/')
-		if (nodes.isEmpty)
-			out.writeChar('>')
+		out.writeChar('>')
 		
 		if (nodes.size > 0) {
 			for (i := 0; i < nodes.size; ++i) {
@@ -353,7 +360,8 @@ class HtmlText : HtmlNode {
 
 	@NoDoc
 	override Void print(OutStream out) {
-		if (raw || elem.isRawText) out.writeChars(text); else out.writeXml(text)
+		if (text.isEmpty) return
+		if (raw || elem?.isRawText == true) out.writeChars(text); else out.writeXml(text)
 	}
 }
 

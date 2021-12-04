@@ -3,7 +3,7 @@ using fandoc::DocNodeId
 
 class TestHtmlDocWriter : Test {
 	
-	private HtmlWriter2? dw2
+	private HtmlDocWriter? dw2
 	
 
 	
@@ -26,7 +26,7 @@ class TestHtmlDocWriter : Test {
 	
 	Void testImagesHaveSrcAndAlt() {
 		out := write("![alt text]`http://href/`")
-		verifyEq(out, "<p><img src=\"http://href/\" alt=\"alt text\"/></p>")
+		verifyEq(out, "<p><img src=\"http://href/\" alt=\"alt text\"></p>")
 	}
 
 	Void testOrderedListStyle() {
@@ -61,13 +61,13 @@ class TestHtmlDocWriter : Test {
 
 	Void testImagesAndText() {
 		out := write("![alt text]`http://href/`\n\nSome text\n")
-		verifyEq(out, "<p><img src=\"http://href/\" alt=\"alt text\"/></p><p>Some text</p>")
+		verifyEq(out, "<p><img src=\"http://href/\" alt=\"alt text\"></p><p>Some text</p>")
 	}
 	
 	// --------
 	
 	override Void setup() {
-		dw2 = HtmlWriter2.original
+		dw2 = HtmlDocWriter.original
 	}
 	
 	private Str write(Str fandoc) {

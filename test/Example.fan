@@ -4,7 +4,7 @@ class Example {
 	Void main() {
 		fandoc := "..."
 
-		html := HtmlWriter2.fullyLoaded.parseAndWriteToStr(fandoc)
+		html := HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc)
 
 		echo(html)	// --> <html> ... </html>
 	}
