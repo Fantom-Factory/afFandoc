@@ -16,6 +16,10 @@ mixin ElemProcessor {
 	static ElemProcessor cssPrefixProcessor() {
 		CssPrefixProcessor()
 	}
+	
+	static ElemProcessor youTubeImageProcessor() {
+		YouTubeImageProcessor()
+	}
 }
 
 @Js

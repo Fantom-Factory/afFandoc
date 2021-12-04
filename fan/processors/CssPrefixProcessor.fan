@@ -6,6 +6,7 @@ internal class CssPrefixProcessor : ElemProcessor {
 		body := elem.text
 		
 		while (body.size > 3) {
+			// I've purposely NOT supported #IDs - it seems wrong!
 			
 			// escape '.cssClass' with '\.cssClass'
 			if (body[0] == '\\' && body[1] == '.')
