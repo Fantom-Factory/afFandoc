@@ -23,8 +23,8 @@ class TablePreProcessor : PreProcessor {
 	Str			tdEnd			:= "</td>"
 	
 	@NoDoc
-	override Obj? process(HtmlElem elem, Uri cmd) {
-		rows := tableParser.parseTable(elem.text.splitLines)
+	override Obj? process(HtmlElem elem, Uri cmd, Str preText) {
+		rows := tableParser.parseTable(preText.splitLines)
 		str	 := StrBuf()
 		out	 := str.out
 

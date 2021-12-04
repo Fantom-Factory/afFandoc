@@ -33,8 +33,8 @@ class SyntaxPreProcessor : PreProcessor {
 	]
 	
 	@NoDoc
-	override Obj? process(HtmlElem elem, Uri cmd) {
-		writeSyntax(cmd.pathStr.trim, "syntax", elem.text)
+	override Obj? process(HtmlElem elem, Uri cmd, Str preText) {
+		writeSyntax(cmd.pathStr.trim, "syntax", preText)
 	}
 
 	HtmlElem writeSyntax(Str extension, Str cssClasses, Str text) {

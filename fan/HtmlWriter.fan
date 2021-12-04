@@ -136,7 +136,7 @@ class HtmlWriter2 : DocWriter {
 		if (cmd?.scheme != null && preProcessors.containsKey(cmd.scheme)) {
 			str		:= StrBuf()
 			preText := body[idx..-1]
-			replace	:= preProcessors[cmd.scheme].process(elem, cmd)
+			replace	:= preProcessors[cmd.scheme].process(elem, cmd, preText)
 			return replace
 		}
 		return elem
