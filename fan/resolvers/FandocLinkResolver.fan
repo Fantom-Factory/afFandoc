@@ -21,14 +21,18 @@ using fandoc::DocElem
 //**   #frag              heading     chapter relative link to anchor
 @Js
 class FandocLinkResolver : LinkResolver {
-	Uri		baseUrl			:= `http://fantom.org/doc/`
+	Uri		baseUrl			:= `https://fantom.org/doc/`
 	Str[]	corePodNames	:= "asn1 build compiler compilerDoc compilerJava compilerJs concurrent crypto cryptoJava docDomkit docFanr docIntro docLang docTools dom domkit email fandoc fanr fansh flux fluxText fwt gfx graphics icons inet math sql syntax sys util web webfwt webmod wisp xml".split
-	override Uri? resolve(DocElem elem, Str? scheme, Uri url) {
+
+	override Uri? resolve(DocElem elem, Uri url) {
 		// link to Fantom Types - Damn you Fantom for creating this crappy syntax!
-		if (scheme == null || !url.pathStr.startsWith(":"))
+		if (url.scheme == null || !url.pathStr.startsWith(":"))
 			return null
 
-		pod  := scheme	// uri.scheme lowercases everything... damn!
+		pod  := findScheme(elem)	// uri.scheme lowercases everything... damn!
+		if (pod == null)
+			return null
+
 		if (!corePodNames.contains(pod))
 			return null
 		

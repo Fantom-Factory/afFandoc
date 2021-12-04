@@ -36,7 +36,7 @@ class TestTableParsing : Test {
 		
 		
 		// this syntax is because I keep forgetting to --- all the way across on the last line
-		// I may as well condence it too!
+		// I may as well condense it too!
 		table3 :=
 """
         Dual      First Last

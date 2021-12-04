@@ -147,8 +147,8 @@ class HtmlDocWriter : DocWriter {
 	virtual Uri? resolveLink(DocElem elem, Str url) {
 		uri := Uri(url, false)
 		if (uri == null) return null
-		scheme	:= uri.scheme == null ? null : url[0..<uri.scheme.size]
-		link	:= linkResolvers.eachWhile { it.resolve(elem, scheme, uri) }
+//		scheme	:= uri.scheme == null ? null : url[0..<uri.scheme.size]
+		link	:= linkResolvers.eachWhile { it.resolve(elem, uri) }
 		invalidLink = link == null
 		return link
 	}
