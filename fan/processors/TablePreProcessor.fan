@@ -23,8 +23,10 @@ class TablePreProcessor : PreProcessor {
 	Str			tdEnd			:= "</td>"
 	
 	@NoDoc
-	override Void process(OutStream out, DocElem elem, Uri cmd, Str preText) {
-		rows := tableParser.parseTable(preText.splitLines)
+	override Obj? process(HtmlElem elem, Uri cmd) {
+		rows := tableParser.parseTable(elem.text.splitLines)
+		str	 := StrBuf()
+		out	 := str.out
 
 		out.print(table)
 		if (!rows.first.isEmpty) {
@@ -51,6 +53,8 @@ class TablePreProcessor : PreProcessor {
 		}
 		out.print(tbodyEnd)
 		out.print(tableEnd)
+
+		return str.toStr
 	}
 }
 

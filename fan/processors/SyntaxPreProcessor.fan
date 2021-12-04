@@ -1,4 +1,3 @@
-using fandoc::DocElem
 using syntax::SyntaxDoc
 using syntax::SyntaxRules
 using syntax::SyntaxType
@@ -34,16 +33,16 @@ class SyntaxPreProcessor : PreProcessor {
 	]
 	
 	@NoDoc
-	override Void process(OutStream out, DocElem elem, Uri cmd, Str preText) {
-		writeSyntax(out, cmd.pathStr.trim, "syntax", preText)
+	override Obj? process(HtmlElem elem, Uri cmd) {
+		writeSyntax(cmd.pathStr.trim, "syntax", elem.text)
 	}
 
-	Void writeSyntax(OutStream out, Str extension, Str cssClasses, Str text) {
+	HtmlElem writeSyntax(Str extension, Str cssClasses, Str text) {
 		if (aliases.containsKey(extension))
 			extension = aliases[extension]		
 
 		ext	:= extension.lower
-		out.print("<div class=\"${cssClasses} ${ext}\">")
+		div := HtmlElem("div").addClass(cssClasses).addClass(ext)
 
 		// trim new lines, but not spaces
 		while (text.startsWith("\n"))
@@ -54,20 +53,23 @@ class SyntaxPreProcessor : PreProcessor {
 		rules := SyntaxRules.loadForExt(ext)
 		if (rules == null) {
 			typeof.pod.log.warn("Could not find syntax file for '${ext}'")
-			out.print("<pre>").writeXml(text).print("</pre>")
+			div.add(HtmlElem("pre").addText(text))
 
 		} else {			
 			parserType	:= Type.find("syntax::SyntaxParser")
 			parser		:= parserType.method("make").call(rules)
 			parserType.field("tabsToSpaces").set(parser, 4)
-			synDoc := parserType.method("parse").callOn(parser, [text.in])
-			writeLines(out, synDoc, renderLineIds)
+			synDoc		:= parserType.method("parse").callOn(parser, [text.in])
+			innerHtml	:= writeLines(synDoc, renderLineIds)
+			div.addHtml(innerHtml)
 		}
 
-		out.print("</div>")
+		return div
 	}
 	
-	private Void writeLines(OutStream out, SyntaxDoc doc, Bool renderLineIds) {
+	private Str writeLines(SyntaxDoc doc, Bool renderLineIds) {
+		str := StrBuf()
+		out	:= str.out
 		out.print("<pre>")
 		doc.eachLine |line| { 
 			if (renderLineIds)
@@ -92,5 +94,6 @@ class SyntaxPreProcessor : PreProcessor {
 			out.writeChar('\n')		
 		}
 		out.print("</pre>")
+		return str.toStr
 	}
 }

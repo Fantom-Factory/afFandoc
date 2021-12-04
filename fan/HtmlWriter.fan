@@ -8,12 +8,56 @@ using fandoc
 @Js
 class HtmlWriter2 : DocWriter { 
 	DocNodeId:Str		cssClasses			:= DocNodeId:Str[:] { it.def = "" }
-	Str:ElemProcessor	preProcessors		:= Str:ElemProcessor[:]
 	LinkResolver[]		linkResolvers		:= LinkResolver[,]
+	ElemProcessor[]		linkProcessors		:= ElemProcessor[,]
+	ElemProcessor[]		imageProcessors		:= ElemProcessor[,]
+	ElemProcessor[]		paraProcessors		:= ElemProcessor[,]
+	Str:PreProcessor	preProcessors		:= Str:PreProcessor[:]
 	@NoDoc Str			invalidLinkClass	:= "invalidLink"
 	StrBuf				str					:= StrBuf()
 	HtmlNode?			htmlNode
 
+	** A simple HTML writer that mimics the original; no invalid links and no pre-block-processing.
+	static HtmlWriter2 original() {
+		HtmlWriter2 {
+			it.linkResolvers.add(
+				LinkResolver.passThroughResolver
+			)
+		}
+	}
+	
+	** A HTML writer that performs pre-block-processing for tables and syntax colouring.
+	static HtmlWriter2 fullyLoaded() {
+		HtmlWriter2 {
+			it.linkResolvers = [
+				LinkResolver.schemePassThroughResolver,
+				LinkResolver.pathAbsPassThroughResolver,
+				LinkResolver.idPassThroughResolver,
+				FandocLinkResolver(),
+				LinkResolver.javascriptErrorResolver,
+				LinkResolver.passThroughResolver,
+			]
+			it.preProcessors["table" ] = TablePreProcessor()
+			if (Env.cur.runtime != "js")
+				it.preProcessors["syntax"] = SyntaxPreProcessor()
+		}
+	}
+	
+	** Writes the given elem to a string.
+	Str writeToStr(DocElem elem) {
+		str.clear
+		elem.write(this)
+		return str.toStr
+	}
+
+	** Writes the given fandoc to a string.
+	** Header properties are auto-dectected.
+	Str parseAndWriteToStr(Str fandoc) {
+		// auto-detect headers - no legal fandoc should start with ***** unless it's a header!
+		doc := FandocParser() { it.parseHeader = fandoc.trimStart.startsWith("*****") }.parseStr(fandoc)
+		return writeToStr(doc)
+	}
+	
 	@NoDoc
 	override Void docStart(Doc doc) { }
 	
@@ -64,14 +108,23 @@ class HtmlWriter2 : DocWriter {
 	Str toHtml() { str.toStr }
 	
 	// ----
+
+	virtual Obj? processLink(HtmlElem elem) {
+		linkProcessors.eachWhile { it.process(elem) }
+		// ![YouTube vids][16x9]`https://www.youtube.com/embed/2SURpUQzUsE`
+	}
+
+	virtual Obj? processImage(HtmlElem elem) {
+		imageProcessors.eachWhile { it.process(elem) }
+	}
 	
 	virtual Obj? processPara(HtmlElem elem) {
+		paraProcessors.eachWhile { it.process(elem) }
+
 		// TODO - enableParaStlying
 		// para text to start with #id  - escape with \#not id
 		// para text to start with .css -  \.not css
 		// para text to start with .{style:here} - 
-		
-		elem
 	}
 
 	virtual Obj? processPre(HtmlElem elem) {
@@ -83,19 +136,10 @@ class HtmlWriter2 : DocWriter {
 		if (cmd?.scheme != null && preProcessors.containsKey(cmd.scheme)) {
 			str		:= StrBuf()
 			preText := body[idx..-1]
-			replace	:= preProcessors[cmd.scheme].process(elem)
+			replace	:= preProcessors[cmd.scheme].process(elem, cmd)
 			return replace
 		}
 		return elem
-	}
-
-	virtual Obj? processLink(HtmlElem elem) {
-		// ![YouTube vids][16x9]`https://www.youtube.com/embed/2SURpUQzUsE`
-		elem
-	}
-
-	virtual Obj? processImage(HtmlElem elem) {
-		elem
 	}
 
 	virtual HtmlNode toHtmlNode(DocElem elem) {
@@ -148,44 +192,11 @@ class HtmlWriter2 : DocWriter {
 	virtual Uri? resolveLink(DocElem elem, Str url) {
 		uri := Uri(url, false)
 		if (uri == null) return null
-//		scheme	:= uri.scheme == null ? null : url[0..<uri.scheme.size]
-		link	:= linkResolvers.eachWhile { it.resolve(elem, uri) }
-		return link
+		return linkResolvers.eachWhile { it.resolve(elem, uri) }
 	}
 
-
-	** Special end-tag handling for Void Elements.
-	** See [Void Elements]`https://www.w3.org/TR/html5/syntax.html#void-elements` in the W3C HTML5 specification.
-	virtual Bool isVoidElem(DocElem elem) {
-		elem.id == DocNodeId.image ||
-		elem.id == DocNodeId.hr
-	}
-	
-	** Writes out an HTML attribute.
-	** If 'val' is 'null' a [HTML5 Boolean attribute]`http://w3c.github.io/html/infrastructure.html#sec-boolean-attributes` is written out.
-	** If 'val' is a 'Uri' then it's [encoded form]`sys::Uri.encode` is written out.
-	** Else 'val.toStr' is used.
-	** 
-	** All attribute values are XML escaped. 
-	virtual Void attr(OutStream out, Str key, Obj? val) {
-		if (val == null) {
-			out.writeChar(' ').print(key)
-			return
-		}
-		val = val is Uri ? ((Uri) val).encode : val
-		out.writeChar(' ').print(key).writeChar('=').writeChar('"')
-		val.toStr.each |Int ch| {
-			if 		(ch == '<')	 out.print("&lt;")
-			else if (ch == '&')	 out.print("&amp;")
-			else if (ch == '\'') out.print("&#39;")
-			else if (ch == '"')	 out.print("&#34;")
-			else				 out.writeChar(ch)
-		}
-		out.writeChar('"')
-	}
-	
 	private static Str toId(Str humanName) {
-		Str.fromChars(humanName.fromDisplayName.chars.findAll { it.isAlphaNum })
+		Str.fromChars(humanName.fromDisplayName.chars.findAll { it.isAlphaNum || it == '_' || it == '-' })
 	}
 }
 
@@ -213,7 +224,7 @@ abstract class HtmlNode {
 		return node
 	}
 	
-	abstract internal Void print(OutStream out)
+	abstract Void print(OutStream out)
 	
 	@NoDoc
 	override Str toStr() { str := StrBuf(); print(str.out); return str.toStr }
@@ -274,6 +285,14 @@ class HtmlElem : HtmlNode {
 		return this
 	}
 	
+	This addText(Str text) {
+		add(HtmlText(text))
+	}
+	
+	This addHtml(Str text) {
+		add(HtmlText(text, true))
+	}
+	
 	** Returns 'true' if this is a 'Void' element.
 	** See [Void elements]`https://html.spec.whatwg.org/multipage/syntax.html#void-elements`.
 	Bool isVoid() {
@@ -287,7 +306,7 @@ class HtmlElem : HtmlNode {
 	}
 	
 	@NoDoc
-	override internal Void print(OutStream out) {
+	override Void print(OutStream out) {
 		if (isVoid && nodes.size > 0)
 			typeof.pod.log.warn("Void tag '${name}' *MUST NOT* have content!") 
 
