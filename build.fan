@@ -1,11 +1,11 @@
-using build
+using build::BuildPod
 
 class Build : BuildPod {
 
     new make() {
         podName = "afFandoc"
-        summary = "Alternative and extensible Fandoc writers that provide intelligent context."
-        version = Version("0.0.7")
+        summary = "Intelligent and extensible Fandoc writers"
+        version = Version("2.0.0")
 
         meta = [
             "pod.dis"       : "Fandoc",
@@ -21,7 +21,7 @@ class Build : BuildPod {
 
         ]
 
-        srcDirs = [`fan/`, `test/`]
+        srcDirs = [`fan/`, `fan/processors/`, `fan/resolvers/`, `test/`]
         resDirs = [`doc/`]
 
         meta["afBuild.testPods"]    = ""

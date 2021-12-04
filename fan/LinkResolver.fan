@@ -9,7 +9,7 @@ mixin LinkResolver {
 
 	** Creates a 'LinkResolver' from the given fn. 
 	static new fromFn(|DocElem elem, Str? scheme, Uri url -> Uri?| fn) {
-		FuncLinkResolver(fn)
+		FnLinkResolver(fn)
 	}
 	
 	** Returns a basic 'LinkResolver' that just returns the given 'url'. 
@@ -46,3 +46,17 @@ mixin LinkResolver {
 		}
 	}
 }
+
+@Js
+internal class FnLinkResolver : LinkResolver {
+	|DocElem, Str?, Uri -> Uri?| func
+	
+	new make(|DocElem, Str?, Uri -> Uri?| func) {
+		this.func = func
+	}
+	
+	override Uri? resolve(DocElem elem, Str? scheme, Uri url) {
+		func(elem, scheme, url)
+	}	
+}
+

@@ -1,19 +1,5 @@
 using fandoc::DocElem
 
-** A generic link resolver that may be customised with a function.
-@Js @NoDoc @Deprecated { msg="Use LinkResolver.fromFn() instead" }
-class FuncLinkResolver : LinkResolver {
-	|DocElem, Str?, Uri -> Uri?| func
-	
-	new make(|DocElem, Str?, Uri -> Uri?| func) {
-		this.func = func
-	}
-	
-	override Uri? resolve(DocElem elem, Str? scheme, Uri url) {
-		func(elem, scheme, url)
-	}	
-}
-
 ** Supports qualified Fantom links as defined in `compilerDoc::DocLink` and resolves them to the 
 ** Fantom website. (@ [http://fantom.org/doc/]`http://fantom.org/doc/`)
 **
@@ -36,8 +22,7 @@ class FuncLinkResolver : LinkResolver {
 @Js
 class FandocLinkResolver : LinkResolver {
 	Uri		baseUrl			:= `http://fantom.org/doc/`
-	Str[]	corePodNames	:= "docIntro docLang docFanr docTools build compiler compilerDoc compilerJava compilerJs concurrent dom domkit email fandoc fanr fansh flux fluxText fwt gfx graphics icons inet obix sql syntax sys testCompiler testJava testNative testSys util web webfwt webmod wisp xml".split
-
+	Str[]	corePodNames	:= "asn1 build compiler compilerDoc compilerJava compilerJs concurrent crypto cryptoJava docDomkit docFanr docIntro docLang docTools dom domkit email fandoc fanr fansh flux fluxText fwt gfx graphics icons inet math sql syntax sys util web webfwt webmod wisp xml".split
 	override Uri? resolve(DocElem elem, Str? scheme, Uri url) {
 		// link to Fantom Types - Damn you Fantom for creating this crappy syntax!
 		if (scheme == null || !url.pathStr.startsWith(":"))
