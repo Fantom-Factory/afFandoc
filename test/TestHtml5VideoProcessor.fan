@@ -1,5 +1,5 @@
 
-class TestHtml5VideoProcessor : Test {
+internal class TestHtml5VideoProcessor : Test {
 	
 	Void testBasic() {
 		out := write("![meh]`/video/catlolz.mp4`")

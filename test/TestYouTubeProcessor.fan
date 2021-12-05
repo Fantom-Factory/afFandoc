@@ -1,5 +1,5 @@
 
-class TestYouTubeProcessor : Test {
+internal class TestYouTubeProcessor : Test {
 	
 	Void testBasic() {
 		out := write("![meh]`https://youtu.be/2SURpUQzUsE`")

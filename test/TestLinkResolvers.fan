@@ -1,6 +1,6 @@
 using fandoc::Link
 
-class TestLinkResolvers : Test {
+internal class TestLinkResolvers : Test {
 	
 	Void testFantomLinkResolver() {
 		linkResolver := FandocLinkResolver()

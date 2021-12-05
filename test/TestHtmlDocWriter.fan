@@ -1,7 +1,7 @@
 using fandoc::FandocParser
 using fandoc::DocNodeId
 
-class TestHtmlDocWriter : Test {
+internal class TestHtmlDocWriter : Test {
 	
 	private HtmlDocWriter? dw2
 	

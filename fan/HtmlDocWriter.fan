@@ -12,15 +12,15 @@ using fandoc::FandocParser
 
 @Js
 class HtmlDocWriter : DocWriter { 
-	DocNodeId:Str		cssClasses			:= DocNodeId:Str[:] { it.def = "" }
-	LinkResolver[]		linkResolvers		:= LinkResolver[,]
-	ElemProcessor[]		linkProcessors		:= ElemProcessor[,]
-	ElemProcessor[]		imageProcessors		:= ElemProcessor[,]
-	ElemProcessor[]		paraProcessors		:= ElemProcessor[,]
-	Str:PreProcessor	preProcessors		:= Str:PreProcessor[:]
-	@NoDoc Str			invalidLinkClass	:= "invalidLink"
-	StrBuf				str					:= StrBuf()
-	HtmlNode?			htmlNode
+	DocNodeId:Str		cssClasses					:= DocNodeId:Str[:] { it.def = "" }
+	LinkResolver[]		linkResolvers				:= LinkResolver[,]
+	ElemProcessor[]		linkProcessors				:= ElemProcessor[,]
+	ElemProcessor[]		imageProcessors				:= ElemProcessor[,]
+	ElemProcessor[]		paraProcessors				:= ElemProcessor[,]
+	Str:PreProcessor	preProcessors				:= Str:PreProcessor[:]
+	Str					invalidLinkClass			:= "invalidLink"
+	protected StrBuf	str							:= StrBuf()
+	protected HtmlNode?	htmlNode
 
 	** A simple HTML writer that mimics the original; no invalid links and no pre-block-processing.
 	static HtmlDocWriter original() {
@@ -34,7 +34,7 @@ class HtmlDocWriter : DocWriter {
 	** A HTML writer that performs pre-block-processing for tables and syntax colouring.
 	static HtmlDocWriter fullyLoaded() {
 		HtmlDocWriter {
-			it.linkResolvers = [
+			it.linkResolvers	= [
 				LinkResolver.schemePassThroughResolver,
 				LinkResolver.pathAbsPassThroughResolver,
 				LinkResolver.idPassThroughResolver,
@@ -42,8 +42,11 @@ class HtmlDocWriter : DocWriter {
 				LinkResolver.javascriptErrorResolver,
 				LinkResolver.passThroughResolver,
 			]
-			it.paraProcessors = [
-				ElemProcessor.cssPrefixProcessor,
+			it.linkProcessors	= [
+				ExternalLinkProcessor(),
+			]
+			it.paraProcessors	= [
+				CssPrefixProcessor(),
 			]
 			it.imageProcessors	= [
 				Html5VideoProcessor(),

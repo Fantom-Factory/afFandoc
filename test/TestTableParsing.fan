@@ -1,5 +1,5 @@
 
-class TestTableParsing : Test {
+internal class TestTableParsing : Test {
 	
 	Void testSimpleTable() {
 		

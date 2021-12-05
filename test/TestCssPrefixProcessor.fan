@@ -1,5 +1,5 @@
 
-class TestCssPrefixProcessor : Test {
+internal class TestCssPrefixProcessor : Test {
 	
 	Void testCssPrefixes() {
 		out := null as Str
