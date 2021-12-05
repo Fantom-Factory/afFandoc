@@ -7,7 +7,7 @@ internal const class VimeoProcessor : ElemProcessor {
 		if (elem.name != "img") return null
 
 		// re-write Vimeo share URLs - https://vimeo.com/11712103
-		uri := Uri.decode(elem["src"], true)
+		uri := elem.getUri("src")
 		if (uri.host == "vimeo.com") {
 			frag  := uri.frag
 			query := uri.query

@@ -45,7 +45,8 @@ class HtmlDocWriter : DocWriter {
 			]
 			it.linkProcessors	= [
 				ExternalLinkProcessor(),
-				ElemProcessor.mailtoProcessor,
+				MailtoProcessor(),
+				PdfLinkProcessor(),
 			]
 			it.paraProcessors	= [
 				CssPrefixProcessor(),

@@ -12,6 +12,10 @@ internal const class MailtoProcessor : ElemProcessor {
 			elem["data-unscramble"]	= path.reverse.toBuf.toBase64Uri.reverse
 			if (elem.text == path || elem.text == href.encode)
 				elem.text = "-" * path.size
+			
+			// https://jodyvanv.com/mailto-links-not-working-on-google-chrome-android/
+			elem["target"]	= "_top"
+			elem["rel"]		= "nofollow"
 		}
 
 		return null

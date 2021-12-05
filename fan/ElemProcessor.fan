@@ -32,6 +32,11 @@ mixin ElemProcessor {
 	static ElemProcessor mailtoProcessor() {
 		MailtoProcessor()
 	}
+	
+	** Opens links to PDFs in a new tab.
+	static ElemProcessor pdfLinkProcessor() {
+		PdfLinkProcessor()
+	}
 
 	** An image processor that inlines (locally hosted) HTML 5 videos.
 	** 'videoAttrs' defaults to 'muted playsinline controls'.
