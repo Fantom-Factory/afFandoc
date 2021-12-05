@@ -46,6 +46,10 @@ class HtmlDocWriter : DocWriter {
 			it.paraProcessors = [
 				ElemProcessor.cssPrefixProcessor,
 			]
+			it.imageProcessors	= [
+				VimeoImageProcessor(),
+				YouTubeImageProcessor(),
+			]
 			it.preProcessors["table"] = TablePreProcessor()
 			if (Env.cur.runtime != "js")
 				it.preProcessors["syntax"] = SyntaxPreProcessor()
@@ -165,7 +169,7 @@ class HtmlDocWriter : DocWriter {
 
 			case DocNodeId.heading:
 				heading := (Heading) elem
-				if (heading.anchorId == null)
+				if (html.id == null)
 					html.id = toId(heading.title)
 
 			case DocNodeId.image:
@@ -245,7 +249,7 @@ class HtmlElem : HtmlNode {
 	static const Str[] rawTags	:= "script style textarea title".split
 
 	const	Str			name
-	private Str:Obj? 	attrs	:= Str:Obj?[:] { ordered = true}
+	private Str:Str? 	attrs	:= Str:Str?[:] { ordered = true}
 	
 	Str? id {
 		get { this["id"] }
@@ -255,6 +259,11 @@ class HtmlElem : HtmlNode {
 	Str? klass {
 		get { this["class"] }
 		set { this["class"] = it }
+	}
+
+	Str? title {
+		get { this["title"] }
+		set { this["title"] = it }
 	}
 	
 	new make(Str name) {
@@ -270,7 +279,10 @@ class HtmlElem : HtmlNode {
 	** Sets an attribute value. Empty strings for name only attrs.
 	@Operator
 	HtmlElem set(Str attr, Obj? val) {
+		if (val is Uri)
+			val = ((Uri) val).encode
 		attrs[attr] = val
+
 		if (val == "")
 			attrs[attr] = null
 		// I know null should really indicate a name-only attr,
@@ -326,9 +338,6 @@ class HtmlElem : HtmlNode {
 				key := attrKeys[i]
 				val := attrs[key]
 				out.writeChar(' ').writeXml(key, mod)
-				
-				if (val is Uri)
-					val = ((Uri) val).encode
 				if (val != null)
 					out.writeChar('=').writeChar('"').writeXml(val.toStr, mod).writeChar('"')
 			}

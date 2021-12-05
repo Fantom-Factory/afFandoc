@@ -16,10 +16,14 @@ mixin ElemProcessor {
 	static ElemProcessor cssPrefixProcessor() {
 		CssPrefixProcessor()
 	}
+
+	static ElemProcessor vimeoImageProcessor() {
+		YouTubeImageProcessor()
+	}
 	
 	static ElemProcessor youTubeImageProcessor() {
 		YouTubeImageProcessor()
-	}
+	}	
 }
 
 @Js
