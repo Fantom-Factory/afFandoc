@@ -27,7 +27,7 @@ mixin LinkResolver {
 	**   pod::Chapter#frag  Chapter     absolute link to book chapter anchor
 	** 	
 	static LinkResolver fandocResolver() {
-		fandocResolver()
+		FandocLinkResolver()
 	}
 	
 	** Returns a basic 'LinkResolver' that just returns the given 'url'. 
