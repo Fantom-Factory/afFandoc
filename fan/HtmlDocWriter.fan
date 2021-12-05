@@ -56,7 +56,8 @@ class HtmlDocWriter : DocWriter {
 				VimeoProcessor(),
 				YouTubeProcessor(),
 			]
-			it.preProcessors["table"] = TablePreProcessor()
+			it.preProcessors["table"]	= TablePreProcessor()
+			it.preProcessors["html"]	= PreProcessor.htmlProcessor
 			if (Env.cur.runtime != "js")
 				it.preProcessors["syntax"] = SyntaxPreProcessor()
 		}

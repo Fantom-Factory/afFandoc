@@ -10,6 +10,21 @@ mixin PreProcessor {
 	static new fromFn(|HtmlElem, Uri, Str| fn) {
 		PreProcessorFn(fn)
 	}
+	
+	** Adds the pre-text as raw HTML.
+	static PreProcessor htmlProcessor() {
+		fromFn |HtmlElem elem, Uri uri, Str html| { elem.addHtml(html) }	
+	}
+	
+	** Standard Syntax pretty printing.
+	static PreProcessor syntaxProcessor() {
+		SyntaxPreProcessor()
+	}
+	
+	** Standard table printing.
+	static PreProcessor tableProcessor() {
+		TablePreProcessor()
+	}
 }
 
 @Js

@@ -1,4 +1,12 @@
 
+//	Video links:
+//	https://caniuse.com/#search=webm
+//	https://caniuse.com/#feat=mpeg4
+//	https://stackoverflow.com/a/53258723/1532548	// autoplay loop muted playsinline
+//	https://stackoverflow.com/questions/36081556/html-video-autoplay-loop
+//	https://stackoverflow.com/questions/32430280/html5-video-fallback-when-all-types-unsupported
+//	https://stackoverflow.com/questions/27785816/webm-before-or-after-mp4-in-html5-video-element
+
 @Js
 internal const class Html5VideoProcessor : ElemProcessor {
 	
