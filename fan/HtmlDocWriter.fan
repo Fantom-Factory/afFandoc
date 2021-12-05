@@ -47,8 +47,9 @@ class HtmlDocWriter : DocWriter {
 				ElemProcessor.cssPrefixProcessor,
 			]
 			it.imageProcessors	= [
-				VimeoImageProcessor(),
-				YouTubeImageProcessor(),
+				Html5VideoProcessor(),
+				VimeoProcessor(),
+				YouTubeProcessor(),
 			]
 			it.preProcessors["table"] = TablePreProcessor()
 			if (Env.cur.runtime != "js")
@@ -267,12 +268,9 @@ class HtmlElem : HtmlNode {
 	
 	Str	text {
 		get {
-			if (nodes.size == 1 && nodes.first is HtmlText) {
-				htmlText := (HtmlText) nodes.first
-				if (htmlText.isHtml)
-					throw Err("Elem text is raw HTML: ${htmlText.text}")
-				return htmlText.text
-			}
+			if (nodes.size == 1 && nodes.first is HtmlText)
+				return ((HtmlText) nodes.first).getPlainText
+
 			text := ""
 			nodes.each |node| {
 				if (node is HtmlElem)
@@ -392,7 +390,7 @@ class HtmlText : HtmlNode {
 	}
 	
 	Str getPlainText() {
-		isHtml ? throw Err("Elem text is raw HTML: ${text}") : text
+		isHtml ? "" : text
 	}
 
 	@NoDoc

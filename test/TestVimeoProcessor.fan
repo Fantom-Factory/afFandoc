@@ -1,5 +1,5 @@
 
-class TestVimeoImageLinks : Test {
+class TestVimeoProcessor : Test {
 	
 	Void testBasic() {
 		out := write("![meh]`https://vimeo.com/11712103`")

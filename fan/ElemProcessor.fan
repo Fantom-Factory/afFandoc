@@ -16,13 +16,18 @@ mixin ElemProcessor {
 	static ElemProcessor cssPrefixProcessor() {
 		CssPrefixProcessor()
 	}
+	
+	** 'videoAttrs' defaults to 'muted playsinline controls'.
+	static ElemProcessor html5VideoProcessor(Str? videoAttrs := null) {
+		Html5VideoProcessor(videoAttrs)
+	}	
 
-	static ElemProcessor vimeoImageProcessor() {
-		YouTubeImageProcessor()
+	static ElemProcessor vimeoProcessor() {
+		VimeoProcessor()
 	}
 	
-	static ElemProcessor youTubeImageProcessor() {
-		YouTubeImageProcessor()
+	static ElemProcessor youTubeProcessor() {
+		YouTubeProcessor()
 	}	
 }
 

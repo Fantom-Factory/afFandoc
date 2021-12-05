@@ -1,5 +1,5 @@
 
-class TestYouTubeImageLinks : Test {
+class TestYouTubeProcessor : Test {
 	
 	Void testBasic() {
 		out := write("![meh]`https://youtu.be/2SURpUQzUsE`")
