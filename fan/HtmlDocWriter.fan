@@ -219,9 +219,8 @@ abstract class HtmlNode {
 //			Str:Obj?	meta	:= Str:Obj?[:]
 
 	HtmlNode?	parent()	{ _parent }
-	HtmlNode[]	nodes()		{ _nodes.ro }
+	HtmlNode[]	nodes()		{ _nodes }
 	HtmlElem?	elem()		{ this is HtmlElem ? this : parent?.elem }
-	virtual Str	text()		{ _nodes.size == 1 ? _nodes.first.text : _nodes.join("") { it.text } }
 	
 	@Operator
 	This add(HtmlNode node) {
@@ -264,6 +263,30 @@ class HtmlElem : HtmlNode {
 	Str? title {
 		get { this["title"] }
 		set { this["title"] = it }
+	}
+	
+	Str	text {
+		get {
+			if (nodes.size == 1 && nodes.first is HtmlText) {
+				htmlText := (HtmlText) nodes.first
+				if (htmlText.isHtml)
+					throw Err("Elem text is raw HTML: ${htmlText.text}")
+				return htmlText.text
+			}
+			text := ""
+			nodes.each |node| {
+				if (node is HtmlElem)
+					text += ((HtmlElem) node).text
+				if (node is HtmlText) {
+					text += ((HtmlText) node).getPlainText
+				}
+			}
+			return text
+		}
+		set {
+			nodes.clear
+			nodes.add(HtmlText(it))
+		}
 	}
 	
 	new make(Str name) {
@@ -360,17 +383,22 @@ class HtmlElem : HtmlNode {
 
 @Js
 class HtmlText : HtmlNode {
-	override	Str		text
-				Bool	raw
+	Str		text
+	Bool	isHtml
 	
-	new make(Str text, Bool raw := false) {
-		this.text = text
+	new make(Str text, Bool isHtml := false) {
+		this.text	= text
+		this.isHtml	= isHtml
+	}
+	
+	Str getPlainText() {
+		isHtml ? throw Err("Elem text is raw HTML: ${text}") : text
 	}
 
 	@NoDoc
 	override Void print(OutStream out) {
 		if (text.isEmpty) return
-		if (raw || elem?.isRawText == true) out.writeChars(text); else out.writeXml(text)
+		if (isHtml || elem?.isRawText == true) out.writeChars(text); else out.writeXml(text)
 	}
 }
 
