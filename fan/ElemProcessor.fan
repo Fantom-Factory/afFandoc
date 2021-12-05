@@ -20,7 +20,17 @@ mixin ElemProcessor {
 	
 	** A link processor that opens external links in a new tab.
 	static ElemProcessor externalLinkProcessor() {
-		externalLinkProcessor()
+		ExternalLinkProcessor()
+	}
+	
+	** Adds the CSS class to the elem. Use for processing invalid links.
+	static ElemProcessor invalidLinkProcessor(Str cssClass := "invalidLink") {
+		fromFn |HtmlElem elem| { elem.addClass(cssClass) }
+	}
+	
+	** Removes 'mailto:' hrefs and adds a 'data-unscramble' attribute.
+	static ElemProcessor mailtoProcessor() {
+		MailtoProcessor()
 	}
 
 	** An image processor that inlines (locally hosted) HTML 5 videos.

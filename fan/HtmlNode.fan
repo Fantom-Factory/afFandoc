@@ -100,6 +100,11 @@ class HtmlElem : HtmlNode {
 		return this
 	}
 	
+	Uri? getUri(Str attr) {
+		val := attrs[attr]
+		return val == null ? null : Uri.decode(val, false)
+	}
+	
 	This addClass(Str cssClass) {
 		if (cssClass.isEmpty) return this
 		klass = (klass?.plus(" ") ?: "") + cssClass

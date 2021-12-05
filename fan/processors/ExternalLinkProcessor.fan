@@ -6,7 +6,7 @@ internal const class ExternalLinkProcessor : ElemProcessor {
 		if (elem.name != "a") return null
 		
 		// open external links in a new tab
-		href := Uri.decode(elem["href"], false)
+		href := elem.getUri("href")
 		if (href?.scheme != null && href?.auth != null)
 			elem["target"] = "_blank"
 

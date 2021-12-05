@@ -34,9 +34,7 @@ class HtmlDocWriter : DocWriter {
 	** A HTML writer that performs pre-block-processing for tables and syntax colouring.
 	static HtmlDocWriter fullyLoaded() {
 		HtmlDocWriter {
-			it.invalidLinkProcessor	= ElemProcessor.fromFn |elem| {
-				elem.addClass("invalidLink"); return null
-			}
+			it.invalidLinkProcessor	= ElemProcessor.invalidLinkProcessor
 			it.linkResolvers	= [
 				LinkResolver.schemePassThroughResolver,
 				LinkResolver.pathAbsPassThroughResolver,
@@ -47,6 +45,7 @@ class HtmlDocWriter : DocWriter {
 			]
 			it.linkProcessors	= [
 				ExternalLinkProcessor(),
+				ElemProcessor.mailtoProcessor,
 			]
 			it.paraProcessors	= [
 				CssPrefixProcessor(),
