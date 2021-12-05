@@ -1,44 +1,43 @@
-using fandoc::DocElem
-using fandoc::DocNodeId
-using fandoc::Link
-using fandoc::Image
 
 ** An interface for resolving URI links.
 @Js
 mixin LinkResolver {
 
 	** Resolve the given 'url'.
-	abstract Uri? resolve(DocElem elem, Uri url)
+	abstract Uri? resolve(Str? scheme, Uri url)
 
 	** Creates a 'LinkResolver' from the given fn. 
-	static new fromFn(|DocElem elem, Uri url -> Uri?| fn) {
+	static new fromFn(|Str? scheme, Uri url -> Uri?| fn) {
 		FnLinkResolver(fn)
 	}
 	
-	** Returns the original "camelCased" scheme associated with the given Elem's URI.
+	** Returns a 'LinkResolver' that returns links to documentation on the Fantom website. 
 	** 
-	** This is useful because Fantom's Uri lower cases the scheme - making the extraction of pod names near impossible!
-	static Str? findScheme(DocElem elem) {
-		url := null as Str
-		switch (elem.id) {
-			case DocNodeId.link		: url = ((Link ) elem).uri
-			case DocNodeId.image	: url = ((Image) elem).uri
-			default					: throw UnsupportedErr("Only link and image elems are supported: ${elem.id}")
-		}
-		if (url == null) return null
-		uri		:= Uri(url, false)
-		scheme	:= uri.scheme == null ? null : url[0..<uri.scheme.size]
-		return scheme
+	** Supports qualified Fantom links as defined in `compilerDoc::DocLink` and resolves them to the 
+	** Fantom website. (@ [http://fantom.org/doc/]`http://fantom.org/doc/`)
+	**
+	**   table:
+	**   Format             Display     Links To
+	**   -----------------  -------     ---------------------------------
+	**   pod::index         pod         absolute link to pod index
+	**   pod::pod-doc       pod         absolute link to pod doc chapter
+	**   pod::Type          Type        absolute link to type qname
+	**   pod::Types.slot    Type.slot   absolute link to slot qname
+	**   pod::Chapter       Chapter     absolute link to book chapter
+	**   pod::Chapter#frag  Chapter     absolute link to book chapter anchor
+	** 	
+	static LinkResolver fandocResolver() {
+		fandocResolver()
 	}
 	
 	** Returns a basic 'LinkResolver' that just returns the given 'url'. 
 	static LinkResolver passThroughResolver() {
-		fromFn() |DocElem elem, Uri url -> Uri?| { url }
+		fromFn() |Str? scheme, Uri url -> Uri?| { url }
 	}
 	
 	** Returns a 'LinkResolver' that returns the given 'url' should it be prefixed with a '#'. 
 	static LinkResolver idPassThroughResolver() {
-		fromFn() |DocElem elem, Uri url -> Uri?| {
+		fromFn() |Str? scheme, Uri url -> Uri?| {
 			url.toStr.startsWith("#") ? url : null
 		}
 	}
@@ -46,21 +45,21 @@ mixin LinkResolver {
 	** Returns a 'LinkResolver' that returns the given 'url' should it be qualified with a 
 	** common scheme such as: 'http', 'https', 'ftp', 'data'. 
 	static LinkResolver schemePassThroughResolver(Str[] schemes := "http https ftp data".split) {
-		fromFn() |DocElem elem, Uri url -> Uri?| {
+		fromFn() |Str? scheme, Uri url -> Uri?| {
 			schemes.contains(url.scheme ?: "") ? url : null
 		}
 	}
 
 	** Returns a 'LinkResolver' that returns the given 'url' should it be path only and path absolute. 
 	static LinkResolver pathAbsPassThroughResolver() {
-		fromFn() |DocElem elem, Uri url -> Uri?| {
+		fromFn() |Str? scheme, Uri url -> Uri?| {
 			url.isRel && url.host == null && url.isPathAbs ? url : null
 		}
 	}
 
 	** Returns a 'LinkResolver' that returns an 'errorUrl' should the given 'url' have a scheme of 'javascript:'.  
 	static LinkResolver javascriptErrorResolver(Uri errorUrl := `/error`) {
-		fromFn() |DocElem elem, Uri url -> Uri?| {
+		fromFn() |Str? scheme, Uri url -> Uri?| {
 			url.scheme == "javascript" ? errorUrl : null
 		}
 	}
@@ -68,14 +67,14 @@ mixin LinkResolver {
 
 @Js
 internal class FnLinkResolver : LinkResolver {
-	|DocElem, Uri -> Uri?| func
+	|Str?, Uri -> Uri?| func
 	
-	new make(|DocElem, Uri -> Uri?| func) {
+	new make(|Str?, Uri -> Uri?| func) {
 		this.func = func
 	}
 	
-	override Uri? resolve(DocElem elem, Uri url) {
-		func(elem, url)
+	override Uri? resolve(Str? scheme, Uri url) {
+		func(scheme, url)
 	}	
 }
 

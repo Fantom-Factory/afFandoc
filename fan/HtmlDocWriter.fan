@@ -18,7 +18,7 @@ class HtmlDocWriter : DocWriter {
 	ElemProcessor[]		imageProcessors				:= ElemProcessor[,]
 	ElemProcessor[]		paraProcessors				:= ElemProcessor[,]
 	Str:PreProcessor	preProcessors				:= Str:PreProcessor[:]
-	Str					invalidLinkClass			:= "invalidLink"
+	ElemProcessor?		invalidLinkProcessor
 	protected StrBuf	str							:= StrBuf()
 	protected HtmlNode?	htmlNode
 
@@ -34,6 +34,9 @@ class HtmlDocWriter : DocWriter {
 	** A HTML writer that performs pre-block-processing for tables and syntax colouring.
 	static HtmlDocWriter fullyLoaded() {
 		HtmlDocWriter {
+			it.invalidLinkProcessor	= ElemProcessor.fromFn |elem| {
+				elem.addClass("invalidLink"); return null
+			}
 			it.linkResolvers	= [
 				LinkResolver.schemePassThroughResolver,
 				LinkResolver.pathAbsPassThroughResolver,
@@ -135,7 +138,6 @@ class HtmlDocWriter : DocWriter {
 
 	virtual Obj? processImage(HtmlElem elem) {
 		imageProcessors.eachWhile { it.process(elem) }
-		// ![YouTube vids][16x9]`https://www.youtube.com/embed/2SURpUQzUsE`
 	}
 	
 	virtual Obj? processPara(HtmlElem elem) {
@@ -177,23 +179,21 @@ class HtmlDocWriter : DocWriter {
 
 			case DocNodeId.image:
 				image := (Image) elem
-				html["src"] = resolveLink(elem, image.uri) ?: image.uri
-				html["alt"] = image.alt
 				if (image.size != null) {
 					sizes := image.size.split('x')
 					html["width"]	= sizes.getSafe(0)?.trimToNull
 					html["height"]	= sizes.getSafe(1)?.trimToNull
 				}
+				src := resolveLink(elem, html, image.uri)
+				html["src"] = src ?: image.uri
+				html["alt"] = image.alt
 
 			case DocNodeId.link:
 				link := (Link) elem
 				url  := Uri(link.uri, false)
-				uri := resolveLink(link, link.uri)
-				html["href"] = uri ?: link.uri
+				href := resolveLink(elem, html, link.uri)
+				html["href"] = href ?: link.uri
 		
-				if (uri == null)
-					html.addClass(invalidLinkClass)
-	
 			case DocNodeId.orderedList:
 				ol := (OrderedList) elem
 				html["style"] = "list-style-type: " + ol.style.htmlType
@@ -204,10 +204,34 @@ class HtmlDocWriter : DocWriter {
 	}
 	
 	** Calls the 'LinkResolvers' looking for valid links.
-	virtual Uri? resolveLink(DocElem elem, Str url) {
+	virtual Uri? resolveLink(DocElem elem, HtmlElem html, Str url) {
+		res := null as Uri
 		uri := Uri(url, false)
-		if (uri == null) return null
-		return linkResolvers.eachWhile { it.resolve(elem, uri) }
+		if (uri != null) {
+			scheme := findScheme(elem)
+			res = linkResolvers.eachWhile { it.resolve(scheme, uri) }
+		}
+		
+		if (res == null)
+			invalidLinkProcessor?.process(html)
+
+		return res
+	}
+
+	** Returns the original "camelCased" scheme associated with the given Elem's URI.
+	** 
+	** This is useful because Fantom's Uri lower cases the scheme - making the extraction of pod names near impossible!
+	Str? findScheme(DocElem elem) {
+		url := null as Str
+		switch (elem.id) {
+			case DocNodeId.link		: url = ((Link ) elem).uri
+			case DocNodeId.image	: url = ((Image) elem).uri
+			default					: throw UnsupportedErr("Only link and image elems are supported: ${elem.id}")
+		}
+		if (url == null) return null
+		uri		:= Uri(url, false)
+		scheme	:= uri.scheme == null ? null : url[0..<uri.scheme.size]
+		return scheme
 	}
 
 	private static Str toId(Str humanName) {

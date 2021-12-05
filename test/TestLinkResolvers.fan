@@ -1,4 +1,3 @@
-using fandoc::Link
 
 internal class TestLinkResolvers : Test {
 	
@@ -13,22 +12,22 @@ internal class TestLinkResolvers : Test {
 		// pod::Chapter       Chapter     absolute link to book chapter
 		// pod::Chapter#frag  Chapter     absolute link to book chapter anchor
 
-		url = linkResolver.resolve(Link("sys::index"), `sys::index`)
+		url = linkResolver.resolve("sys", `sys::index`)
 		verifyEq(url, `https://fantom.org/doc/sys/`)
 
-		url = linkResolver.resolve(Link("sys::pod-doc"), `sys::pod-doc`)
+		url = linkResolver.resolve("sys", `sys::pod-doc`)
 		verifyEq(url, `https://fantom.org/doc/sys/`)
 
-		url = linkResolver.resolve(Link("sys::Type"), `sys::Type`)
+		url = linkResolver.resolve("sys", `sys::Type`)
 		verifyEq(url, `https://fantom.org/doc/sys/Type`)
 
-		url = linkResolver.resolve(Link("sys::Type.slot"), `sys::Type.slot`)
+		url = linkResolver.resolve("sys", `sys::Type.slot`)
 		verifyEq(url, `https://fantom.org/doc/sys/Type#slot`)
 
-		url = linkResolver.resolve(Link("docLang::Methods"), `docLang::Methods`)
+		url = linkResolver.resolve("docLang", `doclang::Methods`)
 		verifyEq(url, `https://fantom.org/doc/docLang/Methods`)
 
-		url = linkResolver.resolve(Link("docLang::Methods#this"), `docLang::Methods#this`)
+		url = linkResolver.resolve("docLang", `docLang::Methods#this`)
 		verifyEq(url, `https://fantom.org/doc/docLang/Methods#this`)
 	}
 	
@@ -36,16 +35,16 @@ internal class TestLinkResolvers : Test {
 		linkResolver := LinkResolver.pathAbsPassThroughResolver
 		url			 := null as Uri		
 
-		url = linkResolver.resolve(Link("http://example.com"), `http://example.com`)
+		url = linkResolver.resolve("http", `http://example.com`)
 		verifyEq(url, null)
 
-		url = linkResolver.resolve(Link("/doc/wotever"), `/doc/wotever`)
+		url = linkResolver.resolve(null, `/doc/wotever`)
 		verifyEq(url, `/doc/wotever`)
 
-		url = linkResolver.resolve(Link("/doc/wotever#frag"), `/doc/wotever#frag`)
+		url = linkResolver.resolve(null, `/doc/wotever#frag`)
 		verifyEq(url, `/doc/wotever#frag`)
 
-		url = linkResolver.resolve(Link("/doc/wotever?query"), `/doc/wotever?query`)
+		url = linkResolver.resolve(null, `/doc/wotever?query`)
 		verifyEq(url, `/doc/wotever?query`)
 	}
 }
