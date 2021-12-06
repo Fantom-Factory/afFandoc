@@ -5,7 +5,7 @@ using syntax::SyntaxType
 ** A 'PreProcessor' that provides syntax highlighting for code blocks.
 ** 
 ** Not available in Javascript.
-class SyntaxPreProcessor : PreProcessor {
+class SyntaxProcessor : PreProcessor {
 
 	Bool renderLineIds
 	

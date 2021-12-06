@@ -4,7 +4,7 @@ using fandoc::FandocParser
 
 ** A 'PreProcessor' for rendering tables to HTML.
 @Js
-class TablePreProcessor : PreProcessor {	
+class TableProcessor : PreProcessor {	
 	private TableParser tableParser		:= TableParser()
 
 	** Hook for rendering cell text. Just returns 'text.toXml' by default.

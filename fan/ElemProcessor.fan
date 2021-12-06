@@ -1,6 +1,6 @@
 using fandoc::DocElem
 
-** An interface for processing '<pre>' text blocks.
+** An interface for processing Fandoc elements.
 @Js
 mixin ElemProcessor {
 

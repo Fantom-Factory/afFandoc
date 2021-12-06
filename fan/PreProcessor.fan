@@ -18,12 +18,12 @@ mixin PreProcessor {
 	
 	** Standard Syntax pretty printing.
 	static PreProcessor syntaxProcessor() {
-		SyntaxPreProcessor()
+		SyntaxProcessor()
 	}
 	
 	** Standard table printing.
 	static PreProcessor tableProcessor() {
-		TablePreProcessor()
+		TableProcessor()
 	}
 }
 

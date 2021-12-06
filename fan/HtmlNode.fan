@@ -22,6 +22,10 @@ abstract class HtmlNode {
 		return node
 	}
 	
+	Void removeMe() {
+		this._parent?._nodes?.removeSame(this)
+	}
+	
 	abstract Void print(OutStream out)
 	
 	@NoDoc
@@ -73,8 +77,10 @@ class HtmlElem : HtmlNode {
 		}
 	}
 	
-	new make(Str name) {
+	new make(Str name, Str? cssClass := null) {
 		this.name = name.lower.trim
+		if (cssClass != null)
+			addClass(cssClass)
 	}
 
 	** Gets an attribue value
