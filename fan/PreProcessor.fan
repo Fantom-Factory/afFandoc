@@ -25,6 +25,11 @@ mixin PreProcessor {
 	static PreProcessor tableProcessor() {
 		TableProcessor()
 	}
+	
+	** Create HTML block elements.
+	static PreProcessor divProcessor(HtmlDocWriter docWriter) {
+		DivProcessor(docWriter)
+	}
 }
 
 @Js

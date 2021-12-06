@@ -26,6 +26,10 @@ abstract class HtmlNode {
 		this._parent?._nodes?.removeSame(this)
 	}
 	
+	Void removeAllChildren() {
+		_nodes.clear
+	}
+	
 	abstract Void print(OutStream out)
 	
 	@NoDoc
