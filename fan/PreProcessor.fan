@@ -13,7 +13,7 @@ mixin PreProcessor {
 	
 	** Adds the pre-text as raw HTML.
 	static PreProcessor htmlProcessor() {
-		fromFn |HtmlElem elem, Uri uri, Str html| { elem.addHtml(html) }	
+		fromFn |HtmlElem elem, Uri uri, Str html -> HtmlNode| { HtmlText(html, true) }	
 	}
 	
 	** Standard Syntax pretty printing.

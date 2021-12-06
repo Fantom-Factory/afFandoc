@@ -67,10 +67,14 @@ class HtmlDocWriter : DocWriter {
 	
 	** Writes the given elem to a string.
 	Str writeToStr(DocElem elem) {
-		old := str
-		buf := str = StrBuf()
+		olds := str
+		oldn := htmlNode
+		buf := StrBuf()
+		str = buf
+		htmlNode = null
 		elem.write(this)
-		str = old
+		str = olds
+		htmlNode = oldn
 		return buf.toStr
 	}
 
