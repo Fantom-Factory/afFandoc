@@ -1,3 +1,4 @@
+using fandoc::Code
 using fandoc::Doc
 using fandoc::DocElem
 using fandoc::DocText
@@ -12,6 +13,7 @@ using fandoc::FandocParser
 
 @Js
 class HtmlDocWriter : DocWriter { 
+	Log					log							:= typeof.pod.log
 	DocNodeId:Str		cssClasses					:= DocNodeId:Str[:] { it.def = "" }
 	LinkResolver[]		linkResolvers				:= LinkResolver[,]
 	ElemProcessor[]		linkProcessors				:= ElemProcessor[,]
@@ -65,19 +67,43 @@ class HtmlDocWriter : DocWriter {
 	
 	** Writes the given elem to a string.
 	Str writeToStr(DocElem elem) {
-		str.clear
+		old := str
+		buf := str = StrBuf()
 		elem.write(this)
-		return str.toStr
+		str = old
+		return buf.toStr
+	}
+
+	** Parses the given string into a Fandoc document.
+	** Document headers are automatically parsed if they're supplied.
+	** Parsing errors are inserted into the start of the documents.
+	Doc parse(Str fandoc, Str? loc := null) {
+		// auto-detect headers - no legal fandoc should start with ***** unless it's a header!
+		parser := FandocParser() { it.parseHeader = fandoc.trim.startsWith("*****"); silent = true }
+		doc	   := parser.parse(loc ?: "afFandoc", fandoc.in, true)
+		if (parser.errs.size > 0) {
+			lines := fandoc.splitLines
+			msg	  := "Fandoc errors" + (loc == null ? "" : " in ${loc}") + ":\n"
+
+			// prepending errors is too specific to generalise in to afFandoc.
+			parser.errs.eachr |err| {
+				errLine := lines.getSafe(err.line, "").toCode
+				p := Para().add(DocText("${err} - ")).add(Code().add(DocText(errLine))) { it.admonition = "parseErr" }
+				doc.insert(0, p)
+				msg += " - ${err} - ${errLine}\n"
+			}
+			log.warn(msg)
+		}
+		
+		return doc
 	}
 
 	** Writes the given fandoc to a string.
-	** Header properties are auto-dectected.
-	Str parseAndWriteToStr(Str fandoc) {
-		// auto-detect headers - no legal fandoc should start with ***** unless it's a header!
-		doc := FandocParser() { it.parseHeader = fandoc.trimStart.startsWith("*****") }.parseStr(fandoc)
+	Str parseAndWriteToStr(Str fandoc, Str? loc := null) {
+		doc := parse(fandoc, loc)
 		return writeToStr(doc)
-	}
-	
+	}	
+
 	@NoDoc
 	override Void docStart(Doc doc) { }
 	
@@ -111,7 +137,7 @@ class HtmlDocWriter : DocWriter {
 			
 			if (res != null && res != cur) {
 				if (res is Str)
-					res = HtmlText(res)
+					res = HtmlText(res, true)
 				if (res isnot HtmlNode)
 					throw UnsupportedErr("Unknown HtmlNode: ${res.typeof}")
 				cur = cur.replaceWith(res)
