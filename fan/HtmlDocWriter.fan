@@ -136,9 +136,9 @@ class HtmlDocWriter : DocWriter {
 
 		if (cur is HtmlElem) {
 			switch (elem.id) {
-				case DocNodeId.para		: res = processPara(cur)
-				case DocNodeId.pre		: res = processPre(cur)
-				case DocNodeId.link		: res = processLink(cur)
+				case DocNodeId.para		: res = processPara	(cur)
+				case DocNodeId.pre		: res = processPre	(cur)
+				case DocNodeId.link		: res = processLink	(cur)
 				case DocNodeId.image	: res = processImage(cur)
 			}
 			
@@ -151,8 +151,11 @@ class HtmlDocWriter : DocWriter {
 			}
 		}
 		
-		if (par == null)
+		if (par == null) {
 			cur.print(str.out)
+			// this \n makes debugging the HTML source SOOO much easier! 
+			str.addChar('\n')
+		}
 		
 		htmlNode = par
 	}
@@ -218,14 +221,14 @@ class HtmlDocWriter : DocWriter {
 					html["width"]	= sizes.getSafe(0)?.trimToNull
 					html["height"]	= sizes.getSafe(1)?.trimToNull
 				}
-				src := resolveLink(elem, html, image.uri)
+				src := resolveLink(html, image.uri)
 				html["src"] = src ?: image.uri
 				html["alt"] = image.alt
 
 			case DocNodeId.link:
 				link := (Link) elem
 				url  := Uri(link.uri, false)
-				href := resolveLink(elem, html, link.uri)
+				href := resolveLink(html, link.uri)
 				html["href"] = href ?: link.uri
 		
 			case DocNodeId.orderedList:
@@ -238,34 +241,20 @@ class HtmlDocWriter : DocWriter {
 	}
 	
 	** Calls the 'LinkResolvers' looking for valid links.
-	virtual Uri? resolveLink(DocElem elem, HtmlElem html, Str url) {
+	virtual Uri? resolveLink(HtmlElem html, Str url) {
 		res := null as Uri
 		uri := Uri(url, false)
 		if (uri != null) {
-			scheme := findScheme(elem)
+			scheme := uri.scheme == null ? null : url[0..<uri.scheme.size]
 			res = linkResolvers.eachWhile { it.resolve(scheme, uri) }
 		}
 		
-		if (res == null)
+		if (res == null) {
+			html["data-invalidLink"] = url
 			invalidLinkProcessor?.process(html)
+		}
 
 		return res
-	}
-
-	** Returns the original "camelCased" scheme associated with the given Elem's URI.
-	** 
-	** This is useful because Fantom's Uri lower cases the scheme - making the extraction of pod names near impossible!
-	Str? findScheme(DocElem elem) {
-		url := null as Str
-		switch (elem.id) {
-			case DocNodeId.link		: url = ((Link ) elem).uri
-			case DocNodeId.image	: url = ((Image) elem).uri
-			default					: throw UnsupportedErr("Only link and image elems are supported: ${elem.id}")
-		}
-		if (url == null) return null
-		uri		:= Uri(url, false)
-		scheme	:= uri.scheme == null ? null : url[0..<uri.scheme.size]
-		return scheme
 	}
 
 	private static Str toId(Str humanName) {

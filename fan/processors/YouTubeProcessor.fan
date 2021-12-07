@@ -27,6 +27,10 @@ internal const class YouTubeProcessor : ElemProcessor {
 			if (!"21by9 16by9 4by3 1by1".split.contains(aspect))
 				aspect = "16by9"
 
+			// we always forget that <div> CANNOT be nested inside <p>
+			if (elem.parent?.elem?.name == "p")
+				elem.parent.elem.rename("div")
+
 			return HtmlElem("div") {
 				it.addClass("youtubeVideo d-print-none embed-responsive embed-responsive-${aspect}")
 				HtmlElem("iframe") {

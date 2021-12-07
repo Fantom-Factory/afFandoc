@@ -7,10 +7,12 @@ abstract class HtmlNode {
 
 	HtmlNode?	parent()	{ _parent }
 	HtmlNode[]	nodes()		{ _nodes }
-	HtmlElem?	elem()		{ this is HtmlElem ? this : parent?.elem }
+	HtmlElem?	elem()		{ this as HtmlElem }
 	
 	@Operator
 	This add(HtmlNode node) {
+		if (node._parent != null)
+			throw Err("HtmlNode already parented: ${node}")
 		this._nodes.add(node)
 		node._parent = this
 		return this
@@ -24,9 +26,11 @@ abstract class HtmlNode {
 	
 	Void removeMe() {
 		this._parent?._nodes?.removeSame(this)
+		this._parent = null
 	}
 	
 	Void removeAllChildren() {
+		_nodes.each { it._parent = null }
 		_nodes.clear
 	}
 	
@@ -42,7 +46,7 @@ class HtmlElem : HtmlNode {
 	static const Str[] voidTags := "area base br col embed hr img input keygen link menuitem meta param source track wbr".split
 	static const Str[] rawTags	:= "script style textarea title".split
 
-	const	Str			name
+	private	Str			_name
 	private Str:Str? 	attrs	:= Str:Str?[:] { ordered = true}
 	
 	Str? id {
@@ -82,9 +86,16 @@ class HtmlElem : HtmlNode {
 	}
 	
 	new make(Str name, Str? cssClass := null) {
-		this.name = name.lower.trim
+		this._name = name.lower.trim
 		if (cssClass != null)
 			addClass(cssClass)
+	}
+	
+	Str name() { _name }
+	
+	This rename(Str newName) {
+		_name = newName
+		return this
 	}
 
 	** Gets an attribue value
@@ -164,18 +175,17 @@ class HtmlElem : HtmlNode {
 					out.writeChar('=').writeChar('"').writeXml(val.toStr, mod).writeChar('"')
 			}
 		}
-		
-		if (nodes.isEmpty && isVoid == false)
-			out.writeChar('/')
 		out.writeChar('>')
 		
-		if (nodes.size > 0) {
-			for (i := 0; i < nodes.size; ++i) {
-				node := nodes[i]
-				node.print(out)
-			}
-			out.writeChar('<').writeChar('/').writeXml(name, mod).writeChar('>')
+		for (i := 0; i < nodes.size; ++i) {
+			node := nodes[i]
+			node.print(out)
 		}
+
+		// interestingly, HTML does NOT allow self-closing tags (that's just XML)
+		// instead it just lets Void tags omit their end tag
+		if (isVoid == false || nodes.size > 0)
+			out.writeChar('<').writeChar('/').writeXml(name, mod).writeChar('>')
 	}
 }
 
@@ -197,7 +207,7 @@ class HtmlText : HtmlNode {
 	@NoDoc
 	override Void print(OutStream out) {
 		if (text.isEmpty) return
-		if (isHtml || elem?.isRawText == true) out.writeChars(text); else out.writeXml(text)
+		if (isHtml || parent?.elem?.isRawText == true) out.writeChars(text); else out.writeXml(text)
 	}
 }
 
