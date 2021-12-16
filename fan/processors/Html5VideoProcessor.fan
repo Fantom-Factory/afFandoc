@@ -20,6 +20,8 @@ internal const class Html5VideoProcessor : ElemProcessor {
 		if (elem.name != "img") return null
 
 		uri := elem.getUri("src")
+		if (uri == null) return null
+
 		if (uri.isRel && uri.host == null && (uri.ext == "mp4" || uri.ext == "webm")) {
 			
 			// codecs are a little too complicated to use

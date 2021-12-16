@@ -136,10 +136,10 @@ class HtmlDocWriter : DocWriter {
 
 		if (cur is HtmlElem) {
 			switch (elem.id) {
+				case DocNodeId.image	: res = processImage(cur)
+				case DocNodeId.link		: res = processLink	(cur)
 				case DocNodeId.para		: res = processPara	(cur)
 				case DocNodeId.pre		: res = processPre	(cur)
-				case DocNodeId.link		: res = processLink	(cur)
-				case DocNodeId.image	: res = processImage(cur)
 			}
 			
 			if (res != null && res != cur) {
@@ -169,12 +169,12 @@ class HtmlDocWriter : DocWriter {
 	
 	// ----
 
-	virtual Obj? processLink(HtmlElem elem) {
-		linkProcessors.eachWhile { it.process(elem) }
-	}
-
 	virtual Obj? processImage(HtmlElem elem) {
 		imageProcessors.eachWhile { it.process(elem) }
+	}
+
+	virtual Obj? processLink(HtmlElem elem) {
+		linkProcessors.eachWhile { it.process(elem) }
 	}
 	
 	virtual Obj? processPara(HtmlElem elem) {

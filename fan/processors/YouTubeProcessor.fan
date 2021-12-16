@@ -10,6 +10,8 @@ internal const class YouTubeProcessor : ElemProcessor {
 
 		// re-write YouTube share URLs - https://youtu.be/2SURpUQzUsE
 		uri := elem.getUri("src")
+		if (uri == null) return null
+
 		if (uri.host == "youtu.be") {
 			frag  := uri.frag
 			query := uri.query

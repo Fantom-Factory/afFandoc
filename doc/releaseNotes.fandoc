@@ -1,3 +1,19 @@
+v2.0.2
+======
+ - Bug: Fixed NPE in video processors.
+
+v2.0.0
+======
+ - New: Rewrote the entire Doc writing process - to be customisable AND sane!
+ - New: Mutable 'HtmlElem' class hierarchy for creating and editing HTML.
+ - New: Introduced new 'ElemProcessor' for general element processing.
+ - New: Added 'PreProcessors' for:
+   - HTML 5 Videos
+   - YouTube Videos
+   - Vimeo Videos
+ - New: Para Processing to add style and class prefixes.
+
+
 v0.0.6
 ======
  - New: 'PreProcessor.fromFn()' ctor.

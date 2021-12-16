@@ -1,13 +1,13 @@
-# Fandoc v0.0.6
+# Fandoc v2.0.0
 ---
 
 [![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](https://fantom-lang.org/)
-[![pod: v0.0.6](http://img.shields.io/badge/pod-v0.0.6-yellow.svg)](http://eggbox.fantomfactory.org/pods/afFandoc)
+[![pod: v2.0.0](http://img.shields.io/badge/pod-v2.0.0-yellow.svg)](http://eggbox.fantomfactory.org/pods/afFandoc)
 [![Licence: ISC](http://img.shields.io/badge/licence-ISC-blue.svg)](https://choosealicense.com/licenses/isc/)
 
 ## Overview
 
-*Fandoc is a support library that aids Alien-Factory in the development of other libraries, frameworks and applications. Though you are welcome to use it, you may find features are missing and the documentation incomplete.*
+*Fandoc is a support library that aids Fantom-Factory in the development of other libraries, frameworks and applications. Though you are welcome to use it, you may find features are missing and the documentation incomplete.*
 
 Alternative and extensible Fandoc writers that provide intelligent context.
 
@@ -27,7 +27,7 @@ Or install `Fandoc` with [fanr](https://fantom.org/doc/docFanr/Tool.html#install
 
 To use in a [Fantom](https://fantom-lang.org/) project, add a dependency to `build.fan`:
 
-    depends = ["sys 1.0", ..., "afFandoc 0.0"]
+    depends = ["sys 1.0", ..., "afFandoc 2.0"]
 
 ## <a name="documentation"></a>Documentation
 
