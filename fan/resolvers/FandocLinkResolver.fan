@@ -22,7 +22,7 @@ using fandoc::DocElem
 @Js @NoDoc
 const class FandocLinkResolver : LinkResolver {
 	const Uri	baseUrl			:= `https://fantom.org/doc/`
-	const Str[]	corePodNames	:= "asn1 build compiler compilerDoc compilerJava compilerJs concurrent crypto cryptoJava docDomkit docFanr docIntro docLang docTools dom domkit email fandoc fanr fansh flux fluxText fwt gfx graphics icons inet math sql syntax sys util web webfwt webmod wisp xml".split
+	const Str[]	corePodNames	:= "asn1 build compiler compilerDoc compilerJava compilerJs concurrent crypto cryptoJava docDomkit docFanr docIntro docLang docTools dom domkit email fandoc fanr fansh flux fluxText fwt gfx graphics icons inet math obix sql syntax sys testCompiler testDomkit testJava testNative util web webfwt webmod wisp xml".split
 
 	override Uri? resolve(Str? scheme, Uri url) {
 		// link to Fantom Types - Damn you Fantom for creating this crappy syntax!
