@@ -72,6 +72,6 @@ internal class TestHtmlDocWriter : Test {
 	
 	private Str write(Str fandoc) {
 		doc := FandocParser().parseStr(fandoc)
-		return dw2.writeToStr(doc).replace("\n", "")
+		return dw2.writeToStr(doc).replace("\n", "").trimEnd
 	}
 }

@@ -15,7 +15,7 @@ internal class DivProcessor : PreProcessor {
 		div.removeAllChildren
 		
 		inner := docWriter.parseAndWriteToStr(preText, "div:")
-		div.addHtml(inner)
+		div.addHtml(inner.trimEnd)
 		return div
 	}
 }

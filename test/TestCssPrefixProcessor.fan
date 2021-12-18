@@ -35,6 +35,6 @@ internal class TestCssPrefixProcessor : Test {
 	}
 	
 	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc)
+		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
 	}
 }
