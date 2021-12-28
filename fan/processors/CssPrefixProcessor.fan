@@ -10,7 +10,7 @@ internal class CssPrefixProcessor : ElemProcessor {
 		body := node.text
 		more := true
 		
-		while (body.size > 3 && more) {
+		while (body.size > 2 && more) {
 			more = false
 			// I've purposely NOT supported #IDs - it just seems... wrong!
 			
@@ -22,13 +22,15 @@ internal class CssPrefixProcessor : ElemProcessor {
 
 			// use simple class styling:  ".callout.glitch Hello!"
 			if (body[0] == '.' && body[1].isLower) {
-				i := body.index("." , 2) ?: body.size-1
-				j := body.index(" " , 2) ?: body.size-1
-				k := body.index("\t", 2) ?: body.size-1
-				i  = i.min(j).min(k)
-				css  := body[1..<i]
-				body  = body[i..-1].trimStart
-				elem.addClass(css)
+				i := body.chars.findIndex |c, i| { i > 2 && !c.isAlphaNum && c != '-' && c != '_' } ?: body.size-1
+//				i := body.index("." , 2) ?: body.size-1
+//				j := body.index(" " , 2) ?: body.size-1
+//				k := body.index("\t", 2) ?: body.size-1
+//				i  = i.min(j).min(k)
+				css  := i == body.size-1 ? body[1  .. i] : body[1..<i]
+				body  = i == body.size-1 ? body[i+1..-1] : body[i..-1]
+				body  = body.trimStart
+				elem.addClass(css.trimEnd)
 				node.text = body
 				more = true
 			} else
