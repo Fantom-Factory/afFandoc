@@ -20,7 +20,7 @@ internal class TestCssPrefixProcessor : Test {
 		verifyEq(out, """<p class="very" style="stylish">This is.</p>""")
 
 		out = write(".{stylish}.very This is.")
-		verifyEq(out, """<p style="stylish" class="very">This is.</p>""")
+		verifyEq(out, """<p class="very" style="stylish">This is.</p>""")
 
 		out = write("\\.{stylish} This is not.")
 		verifyEq(out, """<p>.{stylish} This is not.</p>""")

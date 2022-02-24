@@ -8,45 +8,62 @@ internal class CssPrefixProcessor : ElemProcessor {
 			return null
 		
 		body := node.text
-		more := true
+		data := parseStying(body)
 		
-		while (body.size > 2 && more) {
+		if (data["text"] != body)
+			node.text = data["text"]
+		
+		if (data["class"] != null)
+			data["class"].split.each { elem.addClass(it) }
+		
+		if (data["style"] != null)
+			elem["style"] = data["style"]
+
+		return null
+	}
+	
+	static Str:Str? parseStying(Str text) {
+		clas := Str[,]
+		styl := Str[,]
+		more := true
+		while (text.size > 2 && more) {
 			more = false
 			// I've purposely NOT supported #IDs - it just seems... wrong!
 			
 			// escape '.cssClass' with '\.cssClass'
-			if (body[0] == '\\' && body[1] == '.') {
-				body = body[1..-1]
-				node.text = body
+			if (text[0] == '\\' && text[1] == '.') {
+				text = text[1..-1]
 			} else
 
 			// use simple class styling:  ".callout.glitch Hello!"
-			if (body[0] == '.' && body[1].isLower) {
-				i := body.chars.findIndex |c, i| { i > 2 && !c.isAlphaNum && c != '-' && c != '_' } ?: body.size-1
-//				i := body.index("." , 2) ?: body.size-1
-//				j := body.index(" " , 2) ?: body.size-1
-//				k := body.index("\t", 2) ?: body.size-1
+			if (text[0] == '.' && text[1].isLower) {
+				i := text.chars.findIndex |c, i| { i > 2 && !c.isAlphaNum && c != '-' && c != '_' } ?: text.size-1
+//				i := text.index("." , 2) ?: text.size-1
+//				j := text.index(" " , 2) ?: text.size-1
+//				k := text.index("\t", 2) ?: text.size-1
 //				i  = i.min(j).min(k)
-				css  := i == body.size-1 ? body[1  .. i] : body[1..<i]
-				body  = i == body.size-1 ? body[i+1..-1] : body[i..-1]
-				body  = body.trimStart
-				elem.addClass(css.trimEnd)
-				node.text = body
+				css  := i == text.size-1 ? text[1  .. i] : text[1..<i]
+				text  = i == text.size-1 ? text[i+1..-1] : text[i..-1]
+				text  = text.trimStart
+				clas.add(css.trimEnd)
 				more = true
 			} else
 
 			// use curly bracket for embedded HTML styling:  ".{background-color: pink; padding 1rem; }"
-			if (body[0] == '.' && body[1] == '{') {
-				i := body.index("}" ) ?: body.size-1
-				style := body[2..<i]
-				body   = body[i+1..-1].trimStart
+			if (text[0] == '.' && text[1] == '{') {
+				i := text.index("}" ) ?: text.size-1
+				style := text[2..<i]
+				text   = text[i+1..-1].trimStart
 				
-				elem["style"] = style.trim
-				node.text = body
+				styl.add(style.trim)
 				more = true
 			}	
 		}
-		
-		return null
+
+		return Str:Str?[
+			"text"	: text,
+			"class"	: clas.join(" " ).trimToNull,
+			"style"	: styl.join("; ").trimToNull,
+		] 
 	}
 }

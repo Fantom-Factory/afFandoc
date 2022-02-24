@@ -18,7 +18,6 @@ class Build : BuildPod {
             "sys    1.0.69 - 1.0",
             "fandoc 1.0.69 - 1.0",
             "syntax 1.0.69 - 1.0",
-
         ]
 
         srcDirs = [`fan/`, `fan/processors/`, `fan/resolvers/`, `test/`]

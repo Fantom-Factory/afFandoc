@@ -13,6 +13,5 @@ internal class TestDivProcessor : Test {
 	
 	private Str write(Str fandoc) {
 		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
-
 	}	
 }
