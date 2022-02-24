@@ -12,7 +12,12 @@ mixin ElemProcessor {
 	static new fromFn(|HtmlElem -> Obj?| fn) {
 		FnElemProcessor(fn)
 	}
-	
+
+	** A link processor that allows URIs to be prefixed with CSS class names and styles.
+	static ElemProcessor cssLinkProcessor() {
+		CssLinkProcessor()
+	}	
+
 	** A para processor that allows text to be prefixed with CSS class names and styles.
 	static ElemProcessor cssPrefixProcessor() {
 		CssPrefixProcessor()
