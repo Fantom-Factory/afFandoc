@@ -36,11 +36,15 @@ class HtmlDocWriter : DocWriter {
 	** A HTML writer that performs pre-block-processing for tables and syntax colouring.
 	static HtmlDocWriter fullyLoaded() {
 		HtmlDocWriter {
+			hdw := it
 			it.invalidLinkProcessor	= ElemProcessor.invalidLinkProcessor
 			it.linkResolvers	= [
 				LinkResolver.schemePassThroughResolver,
 				LinkResolver.pathAbsPassThroughResolver,
 				LinkResolver.idPassThroughResolver,
+				LinkResolver.cssLinkResolver |Str? scheme, Uri url -> Uri?| {
+					hdw.linkResolvers.eachWhile { it.resolve(scheme, url) }
+				},
 				FandocLinkResolver(),
 				LinkResolver.javascriptErrorResolver,
 				LinkResolver.passThroughResolver,

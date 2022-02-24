@@ -14,6 +14,7 @@ mixin ElemProcessor {
 	}
 
 	** A link processor that allows URIs to be prefixed with CSS class names and styles.
+	** Don't forget to *also* use the CssLinkResolver to avoid invalid links.
 	static ElemProcessor cssLinkProcessor() {
 		CssLinkProcessor()
 	}	

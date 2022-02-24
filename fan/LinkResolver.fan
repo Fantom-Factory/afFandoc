@@ -63,6 +63,11 @@ mixin LinkResolver {
 			url.scheme == "javascript" ? errorUrl : null
 		}
 	}
+	
+	** Returns a 'LinkResolver' that validates CSS links - use in conjunction with 'CssLinkProcessor'.
+	static LinkResolver cssLinkResolver(|Str? scheme, Uri url->Uri?| resolverLinkFn) {
+		CssLinkResolver(resolverLinkFn)
+	}
 }
 
 @Js
