@@ -1,8 +1,14 @@
-v2.0.2
+v2.0.4 [#v2.0.4]
 ======
- - Bug: Fixed NPE in video processors.
+ - Chg: 'SyntaxProcessor' will no longer log a warning when 'SyntaxRules' cannot be found and the extension is an empty String.
 
-v2.0.0
+v2.0.2 [#v2.0.2]
+======
+ - New: 'CssLinkProcessor'.
+ - Bug: Fixed NPE in video processors.
+ - Bug: 'CssPrefixProcessor' bugs.
+
+v2.0.0 [#2.0.0]
 ======
  - New: Rewrote the entire Doc writing process - to be customisable AND sane!
  - New: Mutable 'HtmlElem' class hierarchy for creating and editing HTML.
@@ -14,17 +20,17 @@ v2.0.0
  - New: Para Processing to add style and class prefixes.
 
 
-v0.0.6
+v0.0.6 [#v0.0.6]
 ======
  - New: 'PreProcessor.fromFn()' ctor.
  - New: 'LinkResolver.fromFn()' ctor, deprecated 'FuncLinkResolver'.
 
-v0.0.4
+v0.0.4 [#v0.0.4]
 ======
  - Chg: Moar virtual methods (override points) in 'HtmlDocWriter' for link attr rendering.
  - Bug: 'LinkResolver.pathAbsPassThroughResolver()' let through absolute URLs even if they had a scheme.
 
-v0.0.2
+v0.0.2 [#v0.0.2]
 ======
  - New: Preview release.
 

@@ -50,12 +50,11 @@ class SyntaxProcessor : PreProcessor {
 		while (text.endsWith("\n"))
 			text = text[0..-2]
 
-		rules := SyntaxRules.loadForExt(ext)
-		if (rules == null) {
-			typeof.pod.log.warn("Could not find syntax file for '${ext}'")
+		rules := loadSyntax(ext)
+		if (rules == null)
 			div.add(HtmlElem("pre").addText(text))
 
-		} else {			
+		else {			
 			parserType	:= Type.find("syntax::SyntaxParser")
 			parser		:= parserType.method("make").call(rules)
 			parserType.field("tabsToSpaces").set(parser, 4)
@@ -65,6 +64,13 @@ class SyntaxProcessor : PreProcessor {
 		}
 
 		return div
+	}
+	
+	virtual SyntaxRules? loadSyntax(Str ext) {
+		rules := SyntaxRules.loadForExt(ext)
+		if (rules == null && ext.size > 0)
+			typeof.pod.log.warn("Could not find syntax file for '${ext}'")
+		return rules
 	}
 	
 	private Str writeLines(SyntaxDoc doc, Bool renderLineIds) {
