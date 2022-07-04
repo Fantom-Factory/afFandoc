@@ -34,6 +34,8 @@ class HtmlDocWriter : DocWriter {
 	}
 	
 	** A HTML writer that performs pre-block-processing for tables and syntax colouring.
+	** 
+	** (EveryLayout processors are preferred over BootStrap.)
 	static HtmlDocWriter fullyLoaded() {
 		HtmlDocWriter {
 			hdw := it
@@ -60,8 +62,8 @@ class HtmlDocWriter : DocWriter {
 			]
 			it.imageProcessors	= [
 				Html5VideoProcessor(),
-				VimeoProcessor(),
-				YouTubeProcessor(),
+				VimeoElProcessor(),
+				YouTubeElProcessor(),
 			]
 			it.preProcessors	= [
 				"table"			: TableProcessor(),
@@ -77,11 +79,11 @@ class HtmlDocWriter : DocWriter {
 	Str writeToStr(DocElem elem) {
 		olds := str
 		oldn := htmlNode
-		buf := StrBuf()
-		str = buf
+		buf  := StrBuf()
+		str   = buf
 		htmlNode = null
 		elem.write(this)
-		str = olds
+		str   = olds
 		htmlNode = oldn
 		return buf.toStr
 	}
@@ -147,11 +149,11 @@ class HtmlDocWriter : DocWriter {
 				case DocNodeId.pre		: res = processPre	(cur)
 			}
 			
-			if (res != null && res != cur) {
+			if (res != null && res !== cur) {
+				if (res isnot Str && res isnot HtmlNode)
+					throw UnsupportedErr("Unknown HtmlNode: ${res.typeof}")
 				if (res is Str)
 					res = HtmlText(res, true)
-				if (res isnot HtmlNode)
-					throw UnsupportedErr("Unknown HtmlNode: ${res.typeof}")
 				cur = cur.replaceWith(res)
 			}
 		}

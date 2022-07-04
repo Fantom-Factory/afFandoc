@@ -44,20 +44,52 @@ mixin ElemProcessor {
 		PdfLinkProcessor()
 	}
 
+	@NoDoc @Deprecated { msg="Use html5VideoBsProcessor() instead" }
+	static ElemProcessor html5VideoProcessor(Str? videoAttrs := null) {
+		html5VideoBsProcessor(videoAttrs)
+	}
 	** An image processor that inlines (locally hosted) HTML 5 videos.
 	** 'videoAttrs' defaults to 'muted playsinline controls'.
-	static ElemProcessor html5VideoProcessor(Str? videoAttrs := null) {
+	static ElemProcessor html5VideoBsProcessor(Str? videoAttrs := null) {
 		Html5VideoProcessor(videoAttrs)
+	}
+
+	** An image processor that inlines (locally hosted) HTML 5 videos.
+	** 'videoAttrs' defaults to 'muted playsinline controls'.
+	static ElemProcessor html5VideoElProcessor(Str? videoAttrs := null) {
+		Html5VideoElProcessor(videoAttrs)
 	}	
 
-	** An image processor that inlines Vimeo videos.
+	@NoDoc @Deprecated { msg="Use vimeoBsProcessor() instead" }
 	static ElemProcessor vimeoProcessor() {
-		VimeoProcessor()
+		vimeoBsProcessor()
+	}
+	** An image processor that inlines Vimeo videos.
+	** Renders Bootstrap CSS classes.
+	static ElemProcessor vimeoBsProcessor() {
+		VimeoBsProcessor()
 	}
 	
-	** An image processor that inlines YouTube videos.
+	** An image processor that inlines Vimeo videos.
+	** Renders EveryLayout for Slim CSS classes.
+	static ElemProcessor vimeoElProcessor() {
+		VimeoElProcessor()
+	}
+	
+	@NoDoc @Deprecated { msg="Use youTubeBsProcessor() instead" }
 	static ElemProcessor youTubeProcessor() {
-		YouTubeProcessor()
+		youTubeBsProcessor()
+	}	
+	** An image processor that inlines YouTube videos.
+	** Renders Bootstrap CSS classes.
+	static ElemProcessor youTubeBsProcessor() {
+		YouTubeBsProcessor()
+	}	
+	
+	** An image processor that inlines YouTube videos.
+	** Renders EveryLayout for Slim CSS classes.
+	static ElemProcessor youTubeElProcessor() {
+		YouTubeElProcessor()
 	}	
 }
 

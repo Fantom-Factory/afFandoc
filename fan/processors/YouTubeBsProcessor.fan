@@ -3,7 +3,7 @@
 ** https://www.youtube.com/embed/2SURpUQzUsE
 ** https://youtu.be/2SURpUQzUsE
 @Js
-internal const class YouTubeProcessor : ElemProcessor {
+internal const class YouTubeBsProcessor : ElemProcessor {
 	
 	override Obj? process(HtmlElem elem) {
 		if (elem.name != "img") return null
@@ -24,6 +24,7 @@ internal const class YouTubeProcessor : ElemProcessor {
 		
 		// YouTube Videos
 		if (uri.host == "www.youtube.com" && uri.path.first == "embed") {
+
 			// make sure the size is one that's recognised
 			aspect	:= (elem["width"] ?: "") + "by" + (elem["height"] ?: "")
 			if (!"21by9 16by9 4by3 1by1".split.contains(aspect))
@@ -35,6 +36,7 @@ internal const class YouTubeProcessor : ElemProcessor {
 
 			return HtmlElem("div") {
 				it.addClass("youtubeVideo d-print-none embed-responsive embed-responsive-${aspect}")
+
 				HtmlElem("iframe") {
 					it.addClass("embed-responsive-item")
 					it["src"]				= uri

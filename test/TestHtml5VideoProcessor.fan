@@ -12,6 +12,6 @@ internal class TestHtml5VideoProcessor : Test {
 	}
 
 	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd {echo(it)}
+		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
 	}
 }

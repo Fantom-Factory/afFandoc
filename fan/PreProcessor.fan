@@ -7,10 +7,10 @@ mixin PreProcessor {
 	abstract Obj? process(HtmlElem elem, Uri cmd, Str text)
 	
 	** Creates a 'PreProcessor' from the given fn. 
-	static new fromFn(|HtmlElem, Uri, Str| fn) {
+	static new fromFn(|HtmlElem, Uri, Str -> Obj?| fn) {
 		PreProcessorFn(fn)
 	}
-	
+
 	** Adds the pre-text as raw HTML.
 	static PreProcessor htmlProcessor() {
 		fromFn |HtmlElem elem, Uri uri, Str html -> HtmlNode| { HtmlText(html, true) }	

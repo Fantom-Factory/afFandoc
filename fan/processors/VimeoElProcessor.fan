@@ -1,7 +1,7 @@
 
 ** https://vimeo.com/11712103
 @Js
-internal const class VimeoProcessor : ElemProcessor {
+internal const class VimeoElProcessor : ElemProcessor {
 	
 	override Obj? process(HtmlElem elem) {
 		if (elem.name != "img") return null
@@ -22,19 +22,27 @@ internal const class VimeoProcessor : ElemProcessor {
 
 		// Vimeo Videos
 		if (uri.host == "player.vimeo.com" && uri.path.first == "video") {
+			
 			// make sure the size is one that's recognised
-			aspect	:= (elem["width"] ?: "") + "by" + (elem["height"] ?: "")
-			if (!"21by9 16by9 4by3 1by1".split.contains(aspect))
-				aspect = "16by9"
+			aspect	:= (elem["width"] ?: "") + "x" + (elem["height"] ?: "")
+			if (!"21x9 16x9 4x3 1x1".split.contains(aspect))
+				aspect = "16x9"
+			
+			width  := aspect.split('x')[0]
+			height := aspect.split('x')[1]
 
 			// we always forget that <div> CANNOT be nested inside <p>
 			if (elem.parent?.elem?.name == "p")
 				elem.parent.elem.rename("div")
 
+			// el-frame may be constrained in size by setting a max-width on .vimeoVideo
+			elem.parent?.elem?.addClass("vimeoVideo")
+
 			return HtmlElem("div") {
-				it.addClass("vimeoVideo d-print-none embed-responsive embed-responsive-${aspect}")
+				it.addClass("el-frame")
+				it.set("style", "--el-frame-width:${width}; --el-frame-height:${height}")
+				
 				HtmlElem("iframe") {
-					it.addClass("embed-responsive-item")
 					it["src"]				= uri
 					it["allowfullscreen"]	= ""
 					it["allow"]				= "fullscreen"
