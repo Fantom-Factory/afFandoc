@@ -2,6 +2,12 @@
 @Js
 internal const class MailtoProcessor : ElemProcessor {
 	
+	private const Str attr
+	
+	new make(Str attr) {
+		this.attr = attr
+	}
+	
 	override Obj? process(HtmlElem elem) {
 		if (elem.name != "a") return null
 	
@@ -9,7 +15,7 @@ internal const class MailtoProcessor : ElemProcessor {
 		path := href?.pathStr
 		if (href?.scheme == "mailto") {
 			elem["href"]			= "#"
-			elem["data-unscramble"]	= path.reverse.toBuf.toBase64Uri.reverse
+			elem[attr]	= path.reverse.toBuf.toBase64Uri.reverse
 			if (elem.text == path || elem.text == href.encode)
 				elem.text = "-" * path.size
 			

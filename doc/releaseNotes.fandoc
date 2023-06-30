@@ -3,6 +3,7 @@ v2.0.6 [#v2.0.6]
 ======
  - New: Added 'HtmlNode.addAll()'.
  - Chg: YouTube processors also accept the standard "watch" URLs.
+ - Chg: MailTo processor may specify a data attr.
 
 v2.0.4 [#v2.0.4]
 ======

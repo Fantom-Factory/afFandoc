@@ -35,8 +35,8 @@ mixin ElemProcessor {
 	}
 	
 	** Removes 'mailto:' hrefs and adds a 'data-unscramble' attribute.
-	static ElemProcessor mailtoProcessor() {
-		MailtoProcessor()
+	static ElemProcessor mailtoProcessor(Str attr := "data-unscramble") {
+		MailtoProcessor(attr)
 	}
 	
 	** Opens links to PDFs in a new tab.
