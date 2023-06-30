@@ -18,6 +18,11 @@ abstract class HtmlNode {
 		return this
 	}
 	
+	This addAll(HtmlNode[] nodes) {
+		nodes.each { this.add(it) }
+		return this
+	}
+	
 	HtmlNode replaceWith(HtmlNode node) {
 		i := this._parent?._nodes?.indexSame(this)
 			 this._parent?._nodes?.set(i, node)
