@@ -1,3 +1,9 @@
+
+v2.0.6 [#v2.0.6]
+======
+ - New: Added 'HtmlNode.addAll()'.
+ - Chg: YouTube processors also accept the standard "watch" URLs.
+
 v2.0.4 [#v2.0.4]
 ======
  - Chg: 'SyntaxProcessor' will no longer log a warning when 'SyntaxRules' cannot be found and the extension is an empty String.

@@ -8,10 +8,26 @@ internal const class YouTubeElProcessor : ElemProcessor {
 	override Obj? process(HtmlElem elem) {
 		if (elem.name != "img") return null
 
-		// re-write YouTube share URLs - https://youtu.be/2SURpUQzUsE
 		uri := elem.getUri("src")
 		if (uri == null) return null
 
+		// re-write the standard "watch" URLs
+		if (uri.host == "www.youtube.com" && uri.path.first == "watch") {
+			frag  := uri.frag
+			query := uri.query
+			vidId := uri.query["v"]
+			if (vidId == null)
+				return null
+			uri = `https://www.youtube.com/embed/${vidId}`
+			if (frag != null)
+				uri = `${uri}#${frag}`
+			query = query.rw
+			query.remove("v")
+			if (query.size > 0)
+				uri = uri.plusQuery(query)
+		}
+
+		// re-write the standard "share" URLs - https://youtu.be/2SURpUQzUsE
 		if (uri.host == "youtu.be") {
 			frag  := uri.frag
 			query := uri.query
@@ -21,7 +37,7 @@ internal const class YouTubeElProcessor : ElemProcessor {
 			if (query.size > 0)
 				uri = uri.plusQuery(query)
 		}
-		
+	
 		// YouTube Videos
 		if (uri.host == "www.youtube.com" && uri.path.first == "embed") {
 	
