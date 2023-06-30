@@ -29,14 +29,16 @@ abstract class HtmlNode {
 		return node
 	}
 	
-	Void removeMe() {
+	This removeMe() {
 		this._parent?._nodes?.removeSame(this)
 		this._parent = null
+		return this
 	}
 	
-	Void removeAllChildren() {
+	This removeAllChildren() {
 		_nodes.each { it._parent = null }
 		_nodes.clear
+		return this
 	}
 	
 	abstract Void print(OutStream out)
