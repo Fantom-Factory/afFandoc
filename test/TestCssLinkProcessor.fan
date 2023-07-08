@@ -20,7 +20,7 @@ internal class TestCssLinkProcessor : Test {
 		verifyEq(out, """<p><a href="/meh" style="color:red">spanny</a></p>""")
 		
 		out = write("[spanny]`.some.class.{color:red} cool.pdf`")
-		verifyEq(out, """<p><a href="cool.pdf" class="some class" style="color:red" target="_blank">spanny</a></p>""")
+		verifyEq(out, """<p><a href="cool.pdf" class="some class" style="color:red">spanny</a></p>""")
 		
 		// make sure links are resolved
 		out = write("[string]`.{color:red} sys::Str`")

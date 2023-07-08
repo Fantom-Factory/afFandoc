@@ -34,8 +34,10 @@ mixin ElemProcessor {
 		javascriptLinkProcessor()
 	}
 
-	** Removes 'mailto:' hrefs and adds a 'data-unscramble' attribute.
-	static ElemProcessor mailtoProcessor(Str attr := "data-unscramble") {
+	** Removes 'mailto:' hrefs and adds a 'data-mailto' attribute with the scrambled email address. 
+	** 
+	** Use 'uf.fromBase64(mailToAttr.reverse).readAllStr.reverse' to unscramble. 
+	static ElemProcessor mailtoProcessor(Str attr := "data-mailto") {
 		MailtoProcessor(attr)
 	}
 
