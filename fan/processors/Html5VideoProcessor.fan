@@ -1,4 +1,5 @@
 using fandoc::DocElem
+using fandoc::Image
 
 //	Video links:
 //	https://caniuse.com/#search=webm
@@ -17,10 +18,10 @@ internal const class Html5VideoProcessor : ElemProcessor {
 		this.videoAttrs = (videoAttrs ?: "muted playsinline controls").split
 	}
 	
-	override Obj? process(HtmlElem elem, DocElem src) {
-		if (elem.name != "img") return null
+	override Obj? process(HtmlElem html, DocElem src) {
+		if (html.name != "img") return null
 
-		uri := elem.getUri("src")
+		uri := html.getUri("src")
 		if (uri == null) return null
 
 		if (uri.isRel && uri.host == null && (uri.ext == "mp4" || uri.ext == "webm")) {
@@ -28,22 +29,46 @@ internal const class Html5VideoProcessor : ElemProcessor {
 			// codecs are a little too complicated to use
 			// https://developer.mozilla.org/en-US/docs/Web/Media/Formats/codecs_parameter
 			type	:= "video/" + uri.ext
-			
-			// make sure the size is one that's recognised
-			aspect	:= (elem["width"] ?: "") + "x" + (elem["height"] ?: "")
-			if (!"21x9 16x9 4x3 1x1".split.contains(aspect))
-				aspect = "16x9"
-			
-			width  := aspect.split('x')[0]
-			height := aspect.split('x')[1]
-
-			// we always forget that <div> CANNOT be nested inside <p>
-			if (elem.parent?.elem?.name == "p")
-				elem.parent.elem.rename("div")
 
 			// el-frame may be constrained in size by setting a max-width on .htmlVideo
-			elem.parent?.elem?.addClass("htmlVideo")
+			html.parent?.elem?.addClass("htmlVideo")
+
+			// we always forget that <div> CANNOT be nested inside <p>
+			if (html.parent?.elem?.name == "p")
+				html.parent.elem.rename("div")
+
+			image	:= (Image) src
+			if (image.size != null) {
+				style	:= ""
+				sizes	:= image.size.split('x')
+				width	:= sizes.getSafe(0)?.trimToNull?.toInt(10, false)
+				height	:= sizes.getSafe(1)?.trimToNull?.toInt(10, false)
+				
+				// set size via style so it overrides any arbitrary CSS styles 
+				if (width  != null)	style +=   "width:${width}px;"
+				if (height != null)	style += " height:${height}px;"
+				if (style.size > 0)
+					html.parent?.elem?.set("style", style)
+			}
 	
+			width	:= 16
+			height	:= 9
+			aspect	:= uri.query["aspectRatio"] 
+			if (aspect != null) {
+				assX 	:= aspect.split('x').getSafe(0)?.trimToNull?.toInt(10, false)
+				assY	:= aspect.split('x').getSafe(1)?.trimToNull?.toInt(10, false)
+				
+				if (assX != null && assY != null) {
+					width	= assX
+					height	= assY
+					
+					// strip the query - then add it back; minus aspectRatio
+					q  := uri.query.rw
+					q.remove("aspectRatio")
+					uri = uri[0..-2].plusName(uri.name).plusQuery(q)
+				}
+			}
+
 			return HtmlElem("div") {
 				it.addClass("el-frame")
 				it.set("style", "--el-frame-width:${width}; --el-frame-height:${height}")
