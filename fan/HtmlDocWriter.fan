@@ -52,7 +52,6 @@ class HtmlDocWriter : DocWriter {
 				ExternalLinkProcessor(),
 				CssLinkProcessor(),
 				MailtoProcessor("data-unscramble"),
-				PdfLinkProcessor(),
 				JavascriptLinkProcessor(),
 			]
 			it.paraProcessors	= [

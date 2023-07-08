@@ -38,11 +38,6 @@ mixin ElemProcessor {
 	static ElemProcessor mailtoProcessor(Str attr := "data-unscramble") {
 		MailtoProcessor(attr)
 	}
-	
-	** Opens links to PDFs in a new tab.
-	static ElemProcessor pdfLinkProcessor() {
-		PdfLinkProcessor()
-	}
 
 	** An image processor that inlines (locally hosted) HTML 5 videos.
 	** 'videoAttrs' defaults to 'muted playsinline controls'.
