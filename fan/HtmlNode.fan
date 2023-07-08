@@ -61,7 +61,7 @@ class HtmlElem : HtmlNode {
 		set { this["id"] = it }
 	}	
 
-	Str? klass {
+	Str? class_ {
 		get { this["class"] }
 		set { this["class"] = it }
 	}
@@ -135,13 +135,13 @@ class HtmlElem : HtmlNode {
 	
 	This addClass(Str cssClass) {
 		if (cssClass.isEmpty) return this
-		klass = (klass?.plus(" ") ?: "") + cssClass
+		class_ = (class_?.plus(" ") ?: "") + cssClass
 		return this
 	}
 	
 	This removeClass(Str cssClass) {
-		if (klass == null || cssClass.isEmpty) return this
-		klass = klass.split.removeAll(cssClass.split).join(" ")
+		if (class_ == null || cssClass.isEmpty) return this
+		class_ = class_.split.removeAll(cssClass.split).join(" ")
 		return this
 	}
 	
