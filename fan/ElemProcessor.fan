@@ -29,11 +29,6 @@ mixin ElemProcessor {
 		ExternalLinkProcessor()
 	}
 	
-	** Adds the CSS class to the elem. Use for processing invalid links.
-	static ElemProcessor invalidLinkProcessor(Str cssClass := "invalidLink") {
-		fromFn |HtmlElem elem| { elem.addClass(cssClass) }
-	}
-	
 	** Removes 'mailto:' hrefs and adds a 'data-unscramble' attribute.
 	static ElemProcessor mailtoProcessor(Str attr := "data-unscramble") {
 		MailtoProcessor(attr)

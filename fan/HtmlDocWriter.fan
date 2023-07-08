@@ -20,7 +20,6 @@ class HtmlDocWriter : DocWriter {
 	ElemProcessor[]		imageProcessors				:= ElemProcessor[,]
 	ElemProcessor[]		paraProcessors				:= ElemProcessor[,]
 	Str:PreProcessor	preProcessors				:= Str:PreProcessor[:]
-	ElemProcessor?		invalidLinkProcessor
 	protected StrBuf	str							:= StrBuf()
 	protected HtmlNode?	htmlNode
 
@@ -39,7 +38,6 @@ class HtmlDocWriter : DocWriter {
 	static HtmlDocWriter fullyLoaded() {
 		HtmlDocWriter {
 			hdw := it
-			it.invalidLinkProcessor	= ElemProcessor.invalidLinkProcessor
 			it.linkResolvers	= [
 				LinkResolver.schemePassThroughResolver,
 				LinkResolver.pathAbsPassThroughResolver,
@@ -256,12 +254,16 @@ class HtmlDocWriter : DocWriter {
 			res = linkResolvers.eachWhile { it.resolve(scheme, uri) }
 		}
 		
-		if (res == null) {
-			html["data-invalidLink"] = url
-			invalidLinkProcessor?.process(html, src)
-		}
+		if (res == null)
+			onUnresolvedLink(html, src, url)
 
 		return res
+	}
+
+	** Called when a URL could not be resolved.
+	** The default is to add a data attr of 'data-unresolvedLink' with the URL.
+	virtual Void onUnresolvedLink(HtmlElem html, DocElem src, Str url) {
+		html["data-unresolvedLink"] = url
 	}
 
 	private static Str toId(Str humanName) {
