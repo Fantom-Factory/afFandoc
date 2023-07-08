@@ -1,3 +1,4 @@
+using fandoc::DocElem
 
 //	Video links:
 //	https://caniuse.com/#search=webm
@@ -8,7 +9,7 @@
 //	https://stackoverflow.com/questions/27785816/webm-before-or-after-mp4-in-html5-video-element
 
 @Js
-internal const class Html5VideoElProcessor : ElemProcessor {
+internal const class Html5VideoProcessor : ElemProcessor {
 	
 	const Str[] videoAttrs
 	
@@ -16,7 +17,7 @@ internal const class Html5VideoElProcessor : ElemProcessor {
 		this.videoAttrs = (videoAttrs ?: "muted playsinline controls").split
 	}
 	
-	override Obj? process(HtmlElem elem) {
+	override Obj? process(HtmlElem elem, DocElem src) {
 		if (elem.name != "img") return null
 
 		uri := elem.getUri("src")

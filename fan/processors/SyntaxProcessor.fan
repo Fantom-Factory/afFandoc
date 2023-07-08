@@ -1,3 +1,4 @@
+using fandoc::DocElem
 using syntax::SyntaxDoc
 using syntax::SyntaxRules
 using syntax::SyntaxType
@@ -11,7 +12,7 @@ class SyntaxProcessor : PreProcessor {
 	
 	** Syntax aliases.
 	Str:Str	aliases := Str:Str[
-		"fantom" : "fan"
+		"fantom" : "fan",
 	]
 
 	** HTML tags to render for each syntax type.
@@ -33,7 +34,7 @@ class SyntaxProcessor : PreProcessor {
 	]
 	
 	@NoDoc
-	override Obj? process(HtmlElem elem, Uri cmd, Str preText) {
+	override Obj? process(HtmlElem elem, DocElem src, Uri cmd, Str preText) {
 		writeSyntax(cmd.pathStr.trim, "syntax", preText)
 	}
 

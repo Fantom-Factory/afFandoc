@@ -1,8 +1,9 @@
+using fandoc::DocElem
 
 @Js
 internal const class PdfLinkProcessor : ElemProcessor {
 	
-	override Obj? process(HtmlElem elem) {
+	override Obj? process(HtmlElem elem, DocElem src) {
 		if (elem.name != "a") return null
 		
 		// open external links in a new tab

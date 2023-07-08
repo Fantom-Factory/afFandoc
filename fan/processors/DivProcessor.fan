@@ -1,3 +1,4 @@
+using fandoc::DocElem
 
 ** div: .class.{style} Use for blocks
 @Js
@@ -9,9 +10,9 @@ internal class DivProcessor : PreProcessor {
 	}
 	
 	@NoDoc
-	override Obj? process(HtmlElem elem, Uri cmd, Str preText) {
+	override Obj? process(HtmlElem elem, DocElem src, Uri cmd, Str preText) {
 		div := HtmlElem("div").addText(cmd.pathStr.trimStart)
-		CssPrefixProcessor().process(div)
+		CssPrefixProcessor().process(div, src)
 		div.removeAllChildren
 		
 		inner := docWriter.parseAndWriteToStr(preText, "div:")

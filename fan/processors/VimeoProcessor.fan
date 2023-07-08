@@ -1,9 +1,10 @@
+using fandoc::DocElem
 
 ** https://vimeo.com/11712103
 @Js
-internal const class VimeoElProcessor : ElemProcessor {
+internal const class VimeoProcessor : ElemProcessor {
 	
-	override Obj? process(HtmlElem elem) {
+	override Obj? process(HtmlElem elem, DocElem src) {
 		if (elem.name != "img") return null
 
 		// re-write Vimeo share URLs - https://vimeo.com/11712103

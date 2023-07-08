@@ -6,10 +6,10 @@ mixin ElemProcessor {
 
 	** Implement to process / alter / modify the given 'HtmlElem'.
 	** Return a replacement 'Str' or 'HtmlElem'.
-	abstract Obj? process(HtmlElem elem)
+	abstract Obj? process(HtmlElem elem, DocElem src)
 	
 	** Creates a 'PreProcessor' from the given fn. 
-	static new fromFn(|HtmlElem -> Obj?| fn) {
+	static new fromFn(|HtmlElem, DocElem -> Obj?| fn) {
 		FnElemProcessor(fn)
 	}
 
@@ -44,64 +44,34 @@ mixin ElemProcessor {
 		PdfLinkProcessor()
 	}
 
-	@NoDoc @Deprecated { msg="Use html5VideoBsProcessor() instead" }
-	static ElemProcessor html5VideoProcessor(Str? videoAttrs := null) {
-		html5VideoBsProcessor(videoAttrs)
-	}
-	** An image processor that inlines (locally hosted) HTML 5 videos.
-	** 'videoAttrs' defaults to 'muted playsinline controls'.
-	static ElemProcessor html5VideoBsProcessor(Str? videoAttrs := null) {
-		Html5VideoProcessor(videoAttrs)
-	}
-
 	** An image processor that inlines (locally hosted) HTML 5 videos.
 	** 'videoAttrs' defaults to 'muted playsinline controls'.
 	static ElemProcessor html5VideoElProcessor(Str? videoAttrs := null) {
-		Html5VideoElProcessor(videoAttrs)
+		Html5VideoProcessor(videoAttrs)
 	}	
 
-	@NoDoc @Deprecated { msg="Use vimeoBsProcessor() instead" }
+	** An image processor that inlines Vimeo videos.
+	** Renders EveryLayout for Slim CSS classes.
 	static ElemProcessor vimeoProcessor() {
-		vimeoBsProcessor()
-	}
-	** An image processor that inlines Vimeo videos.
-	** Renders Bootstrap CSS classes.
-	static ElemProcessor vimeoBsProcessor() {
-		VimeoBsProcessor()
+		VimeoProcessor()
 	}
 	
-	** An image processor that inlines Vimeo videos.
+	** An image processor that inlines YouTube videos.
 	** Renders EveryLayout for Slim CSS classes.
-	static ElemProcessor vimeoElProcessor() {
-		VimeoElProcessor()
-	}
-	
-	@NoDoc @Deprecated { msg="Use youTubeBsProcessor() instead" }
 	static ElemProcessor youTubeProcessor() {
-		youTubeBsProcessor()
-	}	
-	** An image processor that inlines YouTube videos.
-	** Renders Bootstrap CSS classes.
-	static ElemProcessor youTubeBsProcessor() {
-		YouTubeBsProcessor()
-	}	
-	
-	** An image processor that inlines YouTube videos.
-	** Renders EveryLayout for Slim CSS classes.
-	static ElemProcessor youTubeElProcessor() {
-		YouTubeElProcessor()
+		YouTubeProcessor()
 	}	
 }
 
 @Js
 internal class FnElemProcessor : ElemProcessor {
-	private  |HtmlElem -> Obj?| fn
+	private  |HtmlElem, DocElem -> Obj?| fn
 	
-	new make(|HtmlElem -> Obj?| fn) {
+	new make(|HtmlElem, DocElem -> Obj?| fn) {
 		this.fn = fn
 	}
 	
-	override Obj? process(HtmlElem elem) {
-		fn(elem)
+	override Obj? process(HtmlElem elem, DocElem src) {
+		fn(elem, src)
 	}
 }

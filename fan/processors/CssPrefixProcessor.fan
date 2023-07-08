@@ -1,8 +1,9 @@
+using fandoc::DocElem
 
 @Js
 internal class CssPrefixProcessor : ElemProcessor {
 	
-	override Obj? process(HtmlElem elem) {
+	override Obj? process(HtmlElem elem, DocElem src) {
 		node := elem.nodes.first as HtmlText
 		if (node == null || node.isHtml)
 			return null

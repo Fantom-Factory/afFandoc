@@ -62,8 +62,8 @@ class HtmlDocWriter : DocWriter {
 			]
 			it.imageProcessors	= [
 				Html5VideoProcessor(),
-				VimeoElProcessor(),
-				YouTubeElProcessor(),
+				VimeoProcessor(),
+				YouTubeProcessor(),
 			]
 			it.preProcessors	= [
 				"table"			: TableProcessor(),
@@ -143,10 +143,10 @@ class HtmlDocWriter : DocWriter {
 
 		if (cur is HtmlElem) {
 			switch (elem.id) {
-				case DocNodeId.image	: res = processImage(cur)
-				case DocNodeId.link		: res = processLink	(cur)
-				case DocNodeId.para		: res = processPara	(cur)
-				case DocNodeId.pre		: res = processPre	(cur)
+				case DocNodeId.image	: res = processImage(cur, elem)
+				case DocNodeId.link		: res = processLink	(cur, elem)
+				case DocNodeId.para		: res = processPara	(cur, elem)
+				case DocNodeId.pre		: res = processPre	(cur, elem)
 			}
 			
 			if (res != null && res !== cur) {
@@ -176,19 +176,19 @@ class HtmlDocWriter : DocWriter {
 	
 	// ----
 
-	virtual Obj? processImage(HtmlElem elem) {
-		imageProcessors.eachWhile { it.process(elem) }
+	virtual Obj? processImage(HtmlElem elem, DocElem src) {
+		imageProcessors.eachWhile { it.process(elem, src) }
 	}
 
-	virtual Obj? processLink(HtmlElem elem) {
-		linkProcessors.eachWhile { it.process(elem) }
+	virtual Obj? processLink(HtmlElem elem, DocElem src) {
+		linkProcessors.eachWhile { it.process(elem, src) }
 	}
 	
-	virtual Obj? processPara(HtmlElem elem) {
-		paraProcessors.eachWhile { it.process(elem) }
+	virtual Obj? processPara(HtmlElem elem, DocElem src) {
+		paraProcessors.eachWhile { it.process(elem, src) }
 	}
 
-	virtual Obj? processPre(HtmlElem elem) {
+	virtual Obj? processPre(HtmlElem elem, DocElem src) {
 		body	:= elem.text
 		idx		:= body.index("\n") ?: -1
 		cmdTxt	:= body[0..idx].trim
@@ -197,7 +197,7 @@ class HtmlDocWriter : DocWriter {
 		if (cmd?.scheme != null && preProcessors.containsKey(cmd.scheme)) {
 			str		:= StrBuf()
 			preText := body[idx..-1]
-			replace	:= preProcessors[cmd.scheme].process(elem, cmd, preText)
+			replace	:= preProcessors[cmd.scheme].process(elem, src, cmd, preText)
 			return replace
 		}
 		return elem
@@ -228,14 +228,14 @@ class HtmlDocWriter : DocWriter {
 					html["width"]	= sizes.getSafe(0)?.trimToNull
 					html["height"]	= sizes.getSafe(1)?.trimToNull
 				}
-				src := resolveLink(html, image.uri)
+				src := resolveLink(html, elem, image.uri)
 				html["src"] = src ?: image.uri
 				html["alt"] = image.alt
 
 			case DocNodeId.link:
 				link := (Link) elem
 				url  := Uri(link.uri, false)
-				href := resolveLink(html, link.uri)
+				href := resolveLink(html, elem, link.uri)
 				html["href"] = href ?: link.uri
 		
 			case DocNodeId.orderedList:
@@ -248,7 +248,7 @@ class HtmlDocWriter : DocWriter {
 	}
 	
 	** Calls the 'LinkResolvers' looking for valid links.
-	virtual Uri? resolveLink(HtmlElem html, Str url) {
+	virtual Uri? resolveLink(HtmlElem html, DocElem src, Str url) {
 		res := null as Uri
 		uri := Uri(url, false)
 		if (uri != null) {
@@ -258,7 +258,7 @@ class HtmlDocWriter : DocWriter {
 		
 		if (res == null) {
 			html["data-invalidLink"] = url
-			invalidLinkProcessor?.process(html)
+			invalidLinkProcessor?.process(html, src)
 		}
 
 		return res

@@ -1,8 +1,9 @@
+using fandoc::DocElem
 
 @Js
 internal const class CssLinkProcessor : ElemProcessor {
 	
-	override Obj? process(HtmlElem elem) {
+	override Obj? process(HtmlElem elem, DocElem src) {
 		if (elem.name != "a") return null
 	
 		href := elem.getUri("href")?.toStr

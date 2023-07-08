@@ -1,3 +1,4 @@
+using fandoc::DocElem
 
 @Js
 internal const class MailtoProcessor : ElemProcessor {
@@ -8,7 +9,7 @@ internal const class MailtoProcessor : ElemProcessor {
 		this.attr = attr
 	}
 	
-	override Obj? process(HtmlElem elem) {
+	override Obj? process(HtmlElem elem, DocElem src) {
 		if (elem.name != "a") return null
 	
 		href := elem.getUri("href")

@@ -1,11 +1,12 @@
+using fandoc::DocElem
 
 **
 ** https://www.youtube.com/embed/2SURpUQzUsE
 ** https://youtu.be/2SURpUQzUsE
 @Js
-internal const class YouTubeElProcessor : ElemProcessor {
+internal const class YouTubeProcessor : ElemProcessor {
 	
-	override Obj? process(HtmlElem elem) {
+	override Obj? process(HtmlElem elem, DocElem src) {
 		if (elem.name != "img") return null
 
 		uri := elem.getUri("src")
