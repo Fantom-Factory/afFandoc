@@ -36,7 +36,8 @@ class HtmlDocWriter : DocWriter {
 	** 
 	** (EveryLayout processors are preferred over BootStrap.)
 	static HtmlDocWriter fullyLoaded() {
-		HtmlDocWriter {
+		docWriter := null as HtmlDocWriter
+		return docWriter = HtmlDocWriter {
 			hdw := it
 			it.linkResolvers	= [
 				LinkResolver.schemePassThroughResolver,
@@ -63,9 +64,9 @@ class HtmlDocWriter : DocWriter {
 				YouTubeProcessor(),
 			]
 			it.preProcessors	= [
-				"table"			: TableProcessor(),
+				"table"			: TableProcessor() |Str fandoc->Str| { docWriter.parseAndWriteToStr(fandoc, "tableCell:")},
 				"html"			: PreProcessor.htmlProcessor,
-				"div"			: DivProcessor(it),
+				"div"			: DivProcessor() |Str fandoc->Str| { docWriter.parseAndWriteToStr(fandoc, "div:")},
 			]
 			if (Env.cur.runtime != "js")
 				it.preProcessors["syntax"] = SyntaxProcessor()

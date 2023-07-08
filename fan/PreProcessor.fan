@@ -28,8 +28,8 @@ mixin PreProcessor {
 	}
 	
 	** Create HTML block elements.
-	static PreProcessor divProcessor(HtmlDocWriter docWriter) {
-		DivProcessor(docWriter)
+	static PreProcessor divProcessor(|Str->Str|? toHtmlFn := null) {
+		DivProcessor(toHtmlFn)
 	}
 }
 

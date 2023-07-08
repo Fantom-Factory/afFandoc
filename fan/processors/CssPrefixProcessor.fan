@@ -1,10 +1,10 @@
 using fandoc::DocElem
 
-@Js
+@Js @Deprecated
 internal class CssPrefixProcessor : ElemProcessor {
 	
 	static Str? apply(HtmlElem elem, Str cssStr) {
-		data := parseStying(cssStr)
+		data := parseStying(cssStr.trimStart)
 		if (data["class"] != null)
 			data["class"].split.each { elem.addClass(it) }
 		
