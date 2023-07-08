@@ -222,9 +222,16 @@ class HtmlDocWriter : DocWriter {
 			case DocNodeId.image:
 				image := (Image) elem
 				if (image.size != null) {
-					sizes := image.size.split('x')
-					html["width"]	= sizes.getSafe(0)?.trimToNull
-					html["height"]	= sizes.getSafe(1)?.trimToNull
+					style	:= ""
+					sizes	:= image.size.split('x')
+					width	:= sizes.getSafe(0)?.trimToNull?.toInt(10, false)
+					height	:= sizes.getSafe(1)?.trimToNull?.toInt(10, false)
+					
+					// set size via style so it overrides any arbitrary CSS styles 
+					if (width  != null)	style +=   "width: ${width}px;"
+					if (height != null)	style += " height: ${height}px;"
+					if (style.size > 0)
+						html["style"] = style
 				}
 				src := resolveLink(html, elem, image.uri)
 				html["src"] = src ?: image.uri
