@@ -5,7 +5,7 @@ class Build : BuildPod {
     new make() {
         podName = "afFandoc"
         summary = "Intelligent and extensible Fandoc writers"
-        version = Version("2.0.6")
+        version = Version("2.1.0")
 
         meta = [
             "pod.dis"       : "Fandoc",
@@ -15,9 +15,9 @@ class Build : BuildPod {
         ]
 
         depends = [
-            "sys    1.0.69 - 1.0",
-            "fandoc 1.0.69 - 1.0",
-            "syntax 1.0.69 - 1.0",
+            "sys    1.0.78 - 1.0",
+            "fandoc 1.0.78 - 1.0",
+            "syntax 1.0.78 - 1.0",
         ]
 
         srcDirs = [`fan/`, `fan/processors/`, `fan/resolvers/`, `test/`]
