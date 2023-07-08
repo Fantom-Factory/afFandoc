@@ -29,6 +29,11 @@ mixin ElemProcessor {
 		ExternalLinkProcessor()
 	}
 	
+	** A link processor that URLS with a scheme of 'javascript:' with a harmless '#' and sets a 'data-javascriptLink' attribute.  
+	static ElemProcessor javascriptLinkProcessor() {
+		javascriptLinkProcessor()
+	}
+
 	** Removes 'mailto:' hrefs and adds a 'data-unscramble' attribute.
 	static ElemProcessor mailtoProcessor(Str attr := "data-unscramble") {
 		MailtoProcessor(attr)

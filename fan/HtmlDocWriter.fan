@@ -46,7 +46,6 @@ class HtmlDocWriter : DocWriter {
 					hdw.linkResolvers.eachWhile { it.resolve(scheme, url) }
 				},
 				FandocLinkResolver(),
-				LinkResolver.javascriptErrorResolver,
 				LinkResolver.passThroughResolver,
 			]
 			it.linkProcessors	= [
@@ -54,6 +53,7 @@ class HtmlDocWriter : DocWriter {
 				CssLinkProcessor(),
 				MailtoProcessor("data-unscramble"),
 				PdfLinkProcessor(),
+				JavascriptLinkProcessor(),
 			]
 			it.paraProcessors	= [
 				CssPrefixProcessor(),

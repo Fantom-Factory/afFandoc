@@ -44,7 +44,7 @@ mixin LinkResolver {
 
 	** Returns a 'LinkResolver' that returns the given 'url' should it be qualified with a 
 	** common scheme such as: 'http', 'https', 'ftp', 'data'. 
-	static LinkResolver schemePassThroughResolver(Str[] schemes := "http https ftp data".split) {
+	static LinkResolver schemePassThroughResolver(Str[] schemes := "http https ftp data javascript".split) {
 		fromFn() |Str? scheme, Uri url -> Uri?| {
 			schemes.contains(url.scheme ?: "") ? url : null
 		}
@@ -54,13 +54,6 @@ mixin LinkResolver {
 	static LinkResolver pathAbsPassThroughResolver() {
 		fromFn() |Str? scheme, Uri url -> Uri?| {
 			url.isRel && url.host == null && url.isPathAbs ? url : null
-		}
-	}
-
-	** Returns a 'LinkResolver' that returns an 'errorUrl' should the given 'url' have a scheme of 'javascript:'.  
-	static LinkResolver javascriptErrorResolver(Uri errorUrl := `/error`) {
-		fromFn() |Str? scheme, Uri url -> Uri?| {
-			url.scheme == "javascript" ? errorUrl : null
 		}
 	}
 	
