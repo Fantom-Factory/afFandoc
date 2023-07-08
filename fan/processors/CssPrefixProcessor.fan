@@ -3,6 +3,17 @@ using fandoc::DocElem
 @Js
 internal class CssPrefixProcessor : ElemProcessor {
 	
+	static Str? apply(HtmlElem elem, Str cssStr) {
+		data := parseStying(cssStr)
+		if (data["class"] != null)
+			data["class"].split.each { elem.addClass(it) }
+		
+		if (data["style"] != null)
+			elem["style"] = data["style"]
+		
+		return data["text"]?.trimToNull
+	}
+	
 	override Obj? process(HtmlElem elem, DocElem src) {
 		node := elem.nodes.first as HtmlText
 		if (node == null || node.isHtml)

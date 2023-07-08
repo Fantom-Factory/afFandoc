@@ -12,11 +12,8 @@ class TableProcessor : PreProcessor {
 	
 	@NoDoc
 	override Obj? process(HtmlElem elem, DocElem src, Uri cmd, Str preText) {
-		table := HtmlElem("table").addText(cmd.pathStr.trimStart)
-		CssPrefixProcessor().process(table, src)
-		table.removeAllChildren
-		
 		rows  := tableParser.parseTable(preText.splitLines)
+		table := HtmlElem("table")
 		thead := HtmlElem("thead") {
 			HtmlElem("tr").with |tr| {
 				rows.first.each |th| {
@@ -41,6 +38,8 @@ class TableProcessor : PreProcessor {
 		if (rows.first.size > 0)
 			table.add(thead)
 		table.add(tbody)
+
+		CssPrefixProcessor.apply(table, cmd.pathStr.trim)
 
 		return table
 	}

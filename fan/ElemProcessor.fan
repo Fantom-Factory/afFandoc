@@ -24,6 +24,11 @@ mixin ElemProcessor {
 		CssPrefixProcessor()
 	}
 	
+	** Applies the given CSS prefix to the 'HtmlElem' - returns any unused text.
+	static Str? applyCssPrefix(HtmlElem elem, Str cssStr) {
+		CssPrefixProcessor.apply(elem, cssStr)
+	}
+	
 	** A link processor that opens external links in a new tab.
 	static ElemProcessor externalLinkProcessor() {
 		ExternalLinkProcessor()
