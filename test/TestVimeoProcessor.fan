@@ -3,12 +3,17 @@ internal class TestVimeoProcessor : Test {
 	
 	Void testBasic() {
 		out := write("![meh]`https://vimeo.com/11712103`")
-		verifyEq(out, """<div><div class="vimeoVideo d-print-none embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" src="https://player.vimeo.com/video/11712103" allowfullscreen allow="fullscreen" style="border: none;" title="meh"></iframe></div></div>""")
+		verifyEq(out, """<div class="vimeoVideo"><div class="el-frame" style="--el-frame-width:16; --el-frame-height:9"><iframe src="https://player.vimeo.com/video/11712103" allowfullscreen allow="fullscreen" style="border: none;"></iframe></div></div>""")
 	}
 	
+	Void testSize() {
+		out := write("![meh][200x100]`https://vimeo.com/11712103`")
+		verifyEq(out, """<div class="vimeoVideo" style="width:200px; height:100px;"><div class="el-frame" style="--el-frame-width:16; --el-frame-height:9"><iframe src="https://player.vimeo.com/video/11712103" allowfullscreen allow="fullscreen" style="border: none;"></iframe></div></div>""")
+	}
+
 	Void testAspect() {
-		out := write("![meh][4x3]`https://vimeo.com/11712103`")
-		verifyEq(out, """<div><div class="vimeoVideo d-print-none embed-responsive embed-responsive-4by3"><iframe class="embed-responsive-item" src="https://player.vimeo.com/video/11712103" allowfullscreen allow="fullscreen" style="border: none;" title="meh"></iframe></div></div>""")
+		out := write("![meh]`https://vimeo.com/11712103?aspectRatio=2x1`")
+		verifyEq(out, """<div class="vimeoVideo"><div class="el-frame" style="--el-frame-width:2; --el-frame-height:1"><iframe src="https://player.vimeo.com/video/11712103" allowfullscreen allow="fullscreen" style="border: none;"></iframe></div></div>""")
 	}
 
 	private Str write(Str fandoc) {
