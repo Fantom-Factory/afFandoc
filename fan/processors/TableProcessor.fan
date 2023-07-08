@@ -9,6 +9,10 @@ class TableProcessor : PreProcessor {
 
 	** Hook for rendering cell text. Just returns 'text.toXml' by default.
 	|Str->Str|?	renderHtmlFn
+
+	new make(|Str->Str|? renderHtmlFn := null) {
+		this.renderHtmlFn = renderHtmlFn
+	}
 	
 	@NoDoc
 	override Obj? process(HtmlElem elem, DocElem src, Uri cmd, Str preText) {

@@ -23,8 +23,8 @@ mixin PreProcessor {
 	}
 	
 	** Standard table printing.
-	static PreProcessor tableProcessor() {
-		TableProcessor()
+	static PreProcessor tableProcessor(|Str->Str|? toHtmlFn := null) {
+		TableProcessor(toHtmlFn)
 	}
 	
 	** Create HTML block elements.
