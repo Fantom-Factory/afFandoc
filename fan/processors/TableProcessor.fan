@@ -8,53 +8,45 @@ class TableProcessor : PreProcessor {
 	private TableParser tableParser		:= TableParser()
 
 	** Hook for rendering cell text. Just returns 'text.toXml' by default.
-	|Str->Str|	textRenderer	:= |Str text->Str| { text.toXml }
-	Str 		table			:= "<table>"
-	Str 		tableEnd		:= "</table>"
-	Str 		thead			:= "<thead>"
-	Str			theadEnd		:= "</thead>"
-	Str			tbody			:= "<tbody>"
-	Str			tbodyEnd		:= "</tbody>"
-	Str			tr				:= "<tr>"
-	Str			trEnd			:= "</tr>"
-	Str			th				:= "<th>"
-	Str			thEnd			:= "</th>"
-	Str			td				:= "<td>"
-	Str			tdEnd			:= "</td>"
+	|Str->Str|?	renderHtmlFn
 	
 	@NoDoc
 	override Obj? process(HtmlElem elem, DocElem src, Uri cmd, Str preText) {
-		rows := tableParser.parseTable(preText.splitLines)
-		str	 := StrBuf()
-		out	 := str.out
-
-		out.print(table)
-		if (!rows.first.isEmpty) {
-			out.print(thead)
-			out.print(tr)
-			rows.first.each { 
-				out.print(th)
-				out.print(textRenderer(it))
-				out.print(thEnd)
+		table := HtmlElem("table").addText(cmd.pathStr.trimStart)
+		CssPrefixProcessor().process(table, src)
+		table.removeAllChildren
+		
+		rows  := tableParser.parseTable(preText.splitLines)
+		thead := HtmlElem("thead") {
+			HtmlElem("tr").with |tr| {
+				rows.first.each |th| {
+					tr.add( HtmlElem("th") {
+						it.addHtml(toHtml(th))
+					})
+				}
+			},
+		}
+		tbody := HtmlElem("tbody").with |tbody| {
+			rows.eachRange(1..-1) |row| {
+				tbody.add(HtmlElem("tr").with |tr| {
+					row.each |td| {
+						tr.add( HtmlElem("td") {
+							it.addHtml(toHtml(td))
+						})
+					}
+				})
 			}
-			out.print(trEnd)
-			out.print(theadEnd)
 		}
 		
-		out.print(tbody)
-		rows.eachRange(1..-1) |row| {
-			out.print(tr)
-			row.each { 
-				out.print(td)
-				out.print(textRenderer(it))
-				out.print(tdEnd)
-			}
-			out.print(trEnd)
-		}
-		out.print(tbodyEnd)
-		out.print(tableEnd)
+		if (rows.first.size > 0)
+			table.add(thead)
+		table.add(tbody)
 
-		return str.toStr
+		return table
+	}
+	
+	private Str toHtml(Str text) {
+		renderHtmlFn?.call(text) ?: text.toXml
 	}
 }
 
