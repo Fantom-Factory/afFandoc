@@ -1,5 +1,5 @@
 
-internal class TestTableProcessor : Test {
+internal class TestTableProcessor : FandocTest {
 	
 	Void testTableCss() {
 		table := 
@@ -11,9 +11,5 @@ internal class TestTableProcessor : Test {
 		 <pre"
 		out := write(table)
 		verifyEq(out, """<table class="some css" style="color:red"><thead><tr><th>thead</th></tr></thead><tbody><tr><td>tbody</td></tr></tbody></table>""")
-	}
-
-	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
 	}
 }

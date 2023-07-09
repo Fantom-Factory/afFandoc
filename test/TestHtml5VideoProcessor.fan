@@ -1,5 +1,5 @@
 
-internal class TestHtml5VideoProcessor : Test {
+internal class TestHtml5VideoProcessor : FandocTest {
 	
 	Void testBasic() {
 		out := write("![meh]`/video/catlolz.mp4`")
@@ -14,9 +14,5 @@ internal class TestHtml5VideoProcessor : Test {
 	Void testAspect() {
 		out := write("![meh]`/video/catlolz.webm?aspectRatio=2x1`")
 		verifyEq(out, """<div class="htmlVideo"><div class="el-frame" style="--el-frame-width:2; --el-frame-height:1"><video muted playsinline controls><source src="/video/catlolz.webm" type="video/webm"><p>Your browser does not support HTML5 video. Here is a <a href="/video/catlolz.webm">link to the video</a> instead.</p></video></div></div>""")
-	}
-
-	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
 	}
 }

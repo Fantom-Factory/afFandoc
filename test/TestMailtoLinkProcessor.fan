@@ -1,5 +1,5 @@
 
-internal class TestMailtoLinkProcessor : Test {
+internal class TestMailtoLinkProcessor : FandocTest {
 	
 	Void testLinks() {
 		out := null as Str
@@ -10,8 +10,4 @@ internal class TestMailtoLinkProcessor : Test {
 		out = write("`mailto:no@one.com`")
 		verifyEq(out, """<p><a href="#" data-unscramble="gbvB0buVmLj9Wb" target="_top" rel="nofollow">----------</a></p>""")
 	}
-	
-	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
-	}	
 }

@@ -1,5 +1,5 @@
 
-internal class TestExternalLinkProcessor : Test {
+internal class TestExternalLinkProcessor : FandocTest {
 	
 	Void testLinks() {
 		out := null as Str
@@ -10,8 +10,4 @@ internal class TestExternalLinkProcessor : Test {
 		out = write("[link]`http://www.somewhere.com/lets/go!`")
 		verifyEq(out, """<p><a href="http://www.somewhere.com/lets/go!" target="_blank">link</a></p>""")
 	}
-	
-	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
-	}	
 }

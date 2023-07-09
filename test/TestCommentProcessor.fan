@@ -1,5 +1,5 @@
 
-internal class TestCommentProcessor : Test {
+internal class TestCommentProcessor : FandocTest {
 	
 	Void testComments() {
 		out := null as Str
@@ -10,8 +10,4 @@ internal class TestCommentProcessor : Test {
 		out = write("pre>\ntext\n<pre\n\npre>\n.//syntax: axon\na:b\n<pre")
 		verifyEq(out, """<pre>text\n</pre>""")
 	}
-
-	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
-	}	
 }

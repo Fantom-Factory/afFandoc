@@ -1,5 +1,5 @@
 
-internal class TestCssPrefixProcessor : Test {
+internal class TestCssPrefixProcessor : FandocTest {
 	
 	Void testCssPrefixes() {
 		out := null as Str
@@ -32,9 +32,5 @@ internal class TestCssPrefixProcessor : Test {
 		// make sure inner elems are not overwritten
 		out = write(".cta [foo]`/bar`")
 		verifyEq(out, """<p class="cta"><a href="/bar">foo</a></p>""")
-	}
-	
-	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
 	}
 }

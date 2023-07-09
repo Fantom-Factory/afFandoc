@@ -1,5 +1,5 @@
 
-internal class TestCssLinkProcessor : Test {
+internal class TestCssLinkProcessor : FandocTest {
 	
 	Void testLinks() {
 		out := null as Str
@@ -26,8 +26,4 @@ internal class TestCssLinkProcessor : Test {
 		out = write("[string]`.{color:red} sys::Str`")
 		verifyEq(out, """<p><a href="https://fantom.org/doc/sys/Str" style="color:red">string</a></p>""")
 	}
-	
-	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
-	}	
 }

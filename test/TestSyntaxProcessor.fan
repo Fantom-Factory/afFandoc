@@ -1,5 +1,5 @@
 
-internal class TestSyntaxProcessor : Test {
+internal class TestSyntaxProcessor : FandocTest {
 	
 	Void testSyntax() {
 		out := null as Str
@@ -10,8 +10,4 @@ internal class TestSyntaxProcessor : Test {
 		out = write("  syntax: axon .classy.{color:red}\n  a:b\n")
 		verifyEq(out, """<pre class="syntax classy" data-syntax="axon" style="color:red">a:b\n</pre>""")
 	}
-	
-	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
-	}	
 }

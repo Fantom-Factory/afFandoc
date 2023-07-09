@@ -1,5 +1,5 @@
 
-internal class TestDivProcessor : Test {
+internal class TestDivProcessor : FandocTest {
 	
 	Void testLinks() {
 		out := null as Str
@@ -10,8 +10,4 @@ internal class TestDivProcessor : Test {
 		out = write("  div: .classy.this.is\n  To **Boldly** go.")
 		verifyEq(out, """<div class="classy this is"><p>To <strong>Boldly</strong> go.</p></div>""")
 	}
-	
-	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
-	}	
 }

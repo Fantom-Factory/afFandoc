@@ -1,5 +1,5 @@
 
-internal class TestVimeoProcessor : Test {
+internal class TestVimeoProcessor : FandocTest {
 	
 	Void testBasic() {
 		out := write("![meh]`https://vimeo.com/11712103`")
@@ -14,9 +14,5 @@ internal class TestVimeoProcessor : Test {
 	Void testAspect() {
 		out := write("![meh]`https://vimeo.com/11712103?aspectRatio=2x1`")
 		verifyEq(out, """<div class="vimeoVideo"><div class="el-frame" style="--el-frame-width:2; --el-frame-height:1"><iframe src="https://player.vimeo.com/video/11712103" allowfullscreen allow="fullscreen" style="border: none;"></iframe></div></div>""")
-	}
-
-	private Str write(Str fandoc) {
-		HtmlDocWriter.fullyLoaded.parseAndWriteToStr(fandoc).trimEnd
 	}
 }
