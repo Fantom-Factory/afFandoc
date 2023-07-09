@@ -20,6 +20,7 @@ class HtmlDocWriter : DocWriter {
 	ElemProcessor[]		imageProcessors				:= ElemProcessor[,]
 	ElemProcessor[]		paraProcessors				:= ElemProcessor[,]
 	Str:PreProcessor	preProcessors				:= Str:PreProcessor[:]
+	Bool				allowComments				:= true
 	protected StrBuf	str							:= StrBuf()
 	protected HtmlNode?	htmlNode
 
@@ -74,7 +75,9 @@ class HtmlDocWriter : DocWriter {
 	}
 	
 	** Writes the given elem to a string.
-	Str writeToStr(DocElem elem) {
+	** 
+	** Calls to this method *may* be nested.
+	virtual Str writeToStr(DocElem elem) {
 		olds := str
 		oldn := htmlNode
 		buf  := StrBuf()
@@ -86,10 +89,18 @@ class HtmlDocWriter : DocWriter {
 		return buf.toStr
 	}
 
+	** Writes the given fandoc to a string.
+	** 
+	** Calls to this method *may* be nested.
+	virtual Str parseAndWriteToStr(Str fandoc, Str? loc := null) {
+		doc := parse(fandoc, loc)
+		return writeToStr(doc)
+	}	
+
 	** Parses the given string into a Fandoc document.
 	** Document headers are automatically parsed if they're supplied.
 	** Parsing errors are inserted into the start of the documents.
-	Doc parse(Str fandoc, Str? loc := null) {
+	virtual Doc parse(Str fandoc, Str? loc := null) {
 		// auto-detect headers - no legal fandoc should start with ***** unless it's a header!
 		parser := FandocParser() { it.parseHeader = fandoc.trim.startsWith("*****"); silent = true }
 		doc	   := parser.parse(loc ?: "afFandoc", fandoc.in, true)
@@ -100,21 +111,15 @@ class HtmlDocWriter : DocWriter {
 			// prepending errors is too specific to generalise in to afFandoc.
 			parser.errs.eachr |err| {
 				errLine := lines.getSafe(err.line, "").toCode
-				p := Para().add(DocText("${err} - ")).add(Code().add(DocText(errLine))) { it.admonition = "parseErr" }
+				p := Para().add(DocText("${err.msg} (${err.line}) - ")).add(Code().add(DocText(errLine))) { it.admonition = "parseErr" }
 				doc.insert(0, p)
-				msg += " - ${err} - ${errLine}\n"
+				msg += " - ${err.msg} (${err.line}) - ${errLine}\n"
 			}
 			log.warn(msg)
 		}
-		
+
 		return doc
 	}
-
-	** Writes the given fandoc to a string.
-	Str parseAndWriteToStr(Str fandoc, Str? loc := null) {
-		doc := parse(fandoc, loc)
-		return writeToStr(doc)
-	}	
 
 	@NoDoc
 	override Void docStart(Doc doc) { }
@@ -124,7 +129,14 @@ class HtmlDocWriter : DocWriter {
 	
 	@NoDoc
 	override Void elemStart(DocElem elem) {
-		if (elem.id == DocNodeId.doc) return
+		if (elem.id == DocNodeId.doc)		return
+		
+		// comments are hard coded
+		if (allowComments && elem.toText.startsWith(".//")) {
+			htmlNode = null
+			return
+		}
+
 		cur := toHtmlNode(elem)
 		htmlNode?.add(cur)
 		htmlNode = cur
@@ -136,7 +148,6 @@ class HtmlDocWriter : DocWriter {
 		if (htmlNode == null) return
 
 		cur := htmlNode
-		par := htmlNode?.parent
 		res := null as Obj
 
 		if (cur is HtmlElem) {
@@ -155,7 +166,9 @@ class HtmlDocWriter : DocWriter {
 				cur = cur.replaceWith(res)
 			}
 		}
-		
+
+		// print out top level nodes
+		par := htmlNode?.parent
 		if (par == null) {
 			cur.print(str.out)
 			// this \n makes debugging the HTML source SOOO much easier! 
@@ -167,7 +180,7 @@ class HtmlDocWriter : DocWriter {
 
 	@NoDoc
 	override Void text(DocText docText) {
-		htmlNode.elem.addText(docText.str)
+		htmlNode?.elem?.addText(docText.str)
 	}	
 	
 	Str toHtml() { str.toStr }
