@@ -3,7 +3,7 @@
 abstract class HtmlNode {
 	private	HtmlNode?	_parent
 	private HtmlNode[]	_nodes	:= HtmlNode[,]
-//			Str:Obj?	meta	:= Str:Obj?[:]
+	internal Bool		_killMe	// a quick hack / get out of jail free card
 
 	HtmlNode?	parent()	{ _parent }
 	HtmlNode[]	nodes()		{ _nodes }
@@ -32,6 +32,7 @@ abstract class HtmlNode {
 	This removeMe() {
 		this._parent?._nodes?.removeSame(this)
 		this._parent = null
+		this._killMe = true
 		return this
 	}
 	

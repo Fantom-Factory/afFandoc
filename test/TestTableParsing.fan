@@ -103,5 +103,4 @@ internal class TestTableParsing : Test {
 
 		verifyEq(data.size, 4)
 	}
-	
 }

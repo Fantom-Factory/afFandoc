@@ -131,7 +131,7 @@ class HtmlDocWriter : DocWriter {
 	override Void elemStart(DocElem elem) {
 		if (elem.id == DocNodeId.doc)		return
 		
-		// comments are hard coded
+		// comments are hard coded - its... just easier this way.
 		if (allowComments && elem.toText.startsWith(".//")) {
 			htmlNode = null
 			return
@@ -168,8 +168,9 @@ class HtmlDocWriter : DocWriter {
 		}
 
 		// print out top level nodes
+		// check that the elem has not been removed
 		par := htmlNode?.parent
-		if (par == null) {
+		if (par == null && cur._killMe == false) {
 			cur.print(str.out)
 			// this \n makes debugging the HTML source SOOO much easier! 
 			str.addChar('\n')

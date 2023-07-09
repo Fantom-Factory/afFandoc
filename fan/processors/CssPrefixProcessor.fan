@@ -1,6 +1,6 @@
 using fandoc::DocElem
 
-@Js @Deprecated
+@Js
 internal class CssPrefixProcessor : ElemProcessor {
 	
 	static Str? apply(HtmlElem elem, Str cssStr) {
