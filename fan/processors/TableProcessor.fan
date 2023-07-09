@@ -49,7 +49,14 @@ class TableProcessor : PreProcessor {
 	}
 	
 	private Str toHtml(Str text) {
-		renderHtmlFn?.call(text) ?: text.toXml
+		if (renderHtmlFn == null)
+			return text.toXml
+		
+		// remove extraneous wrapping <p> tags 
+		html := renderHtmlFn(text).trim
+		if (html.startsWith("<p>") && html.endsWith("</p>"))
+			html = html[3..<-4]
+		return html
 	}
 }
 
