@@ -21,7 +21,7 @@ class Build : BuildPod {
         ]
 
         srcDirs = [`fan/`, `fan/processors/`, `fan/resolvers/`, `test/`]
-        resDirs = [`doc/`]
+        resDirs = [`doc/`, `etc/syntax/`]
 
         meta["afBuild.testPods"]    = ""
     }

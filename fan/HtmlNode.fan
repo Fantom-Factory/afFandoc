@@ -113,7 +113,7 @@ class HtmlElem : HtmlNode {
 
 	** Sets an attribute value. Empty strings for name only attrs.
 	@Operator
-	HtmlElem set(Str attr, Obj? val) {
+	This set(Str attr, Obj? val) {
 		if (val is Uri)
 			val = ((Uri) val).encode
 		attrs[attr] = val
@@ -125,6 +125,11 @@ class HtmlElem : HtmlNode {
 		// and *could* also be un-expected behaviour
 		if (val == null)
 			attrs.remove(attr)
+		return this
+	}
+	
+	This setId(Str id) {
+		this.id = id
 		return this
 	}
 	

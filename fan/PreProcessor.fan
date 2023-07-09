@@ -18,12 +18,12 @@ mixin PreProcessor {
 	}
 	
 	** Standard Syntax pretty printing.
-	static PreProcessor syntaxProcessor() {
-		SyntaxProcessor()
+	static SyntaxProcessor syntaxProcessor([Str:Str]? aliases) {
+		SyntaxProcessor(aliases)
 	}
 	
 	** Standard table printing.
-	static PreProcessor tableProcessor(|Str->Str|? toHtmlFn := null) {
+	static TableProcessor tableProcessor(|Str->Str|? toHtmlFn := null) {
 		TableProcessor(toHtmlFn)
 	}
 	
