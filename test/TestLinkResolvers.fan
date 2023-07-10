@@ -3,7 +3,7 @@ internal class TestLinkResolvers : Test {
 	
 	Void testFantomLinkResolver() {
 		linkResolver := FandocLinkResolver()
-		url			 := null as Uri
+		uri			 := null as Uri
 
 		// pod::index         pod         absolute link to pod index
 		// pod::pod-doc       pod         absolute link to pod doc chapter
@@ -12,39 +12,39 @@ internal class TestLinkResolvers : Test {
 		// pod::Chapter       Chapter     absolute link to book chapter
 		// pod::Chapter#frag  Chapter     absolute link to book chapter anchor
 
-		url = linkResolver.resolve("sys", `sys::index`)
-		verifyEq(url, `https://fantom.org/doc/sys/`)
+		uri = linkResolver.resolve("sys", `sys::index`)
+		verifyEq(uri, `https://fantom.org/doc/sys/`)
 
-		url = linkResolver.resolve("sys", `sys::pod-doc`)
-		verifyEq(url, `https://fantom.org/doc/sys/`)
+		uri = linkResolver.resolve("sys", `sys::pod-doc`)
+		verifyEq(uri, `https://fantom.org/doc/sys/`)
 
-		url = linkResolver.resolve("sys", `sys::Type`)
-		verifyEq(url, `https://fantom.org/doc/sys/Type`)
+		uri = linkResolver.resolve("sys", `sys::Type`)
+		verifyEq(uri, `https://fantom.org/doc/sys/Type`)
 
-		url = linkResolver.resolve("sys", `sys::Type.slot`)
-		verifyEq(url, `https://fantom.org/doc/sys/Type#slot`)
+		uri = linkResolver.resolve("sys", `sys::Type.slot`)
+		verifyEq(uri, `https://fantom.org/doc/sys/Type#slot`)
 
-		url = linkResolver.resolve("docLang", `doclang::Methods`)
-		verifyEq(url, `https://fantom.org/doc/docLang/Methods`)
+		uri = linkResolver.resolve("docLang", `doclang::Methods`)
+		verifyEq(uri, `https://fantom.org/doc/docLang/Methods`)
 
-		url = linkResolver.resolve("docLang", `docLang::Methods#this`)
-		verifyEq(url, `https://fantom.org/doc/docLang/Methods#this`)
+		uri = linkResolver.resolve("docLang", `docLang::Methods#this`)
+		verifyEq(uri, `https://fantom.org/doc/docLang/Methods#this`)
 	}
 	
 	Void testPathAbsPassThrough() {
 		linkResolver := LinkResolver.pathAbsPassThroughResolver
-		url			 := null as Uri		
+		uri			 := null as Uri		
 
-		url = linkResolver.resolve("http", `http://example.com`)
-		verifyEq(url, null)
+		uri = linkResolver.resolve("http", `http://example.com`)
+		verifyEq(uri, null)
 
-		url = linkResolver.resolve(null, `/doc/wotever`)
-		verifyEq(url, `/doc/wotever`)
+		uri = linkResolver.resolve(null, `/doc/wotever`)
+		verifyEq(uri, `/doc/wotever`)
 
-		url = linkResolver.resolve(null, `/doc/wotever#frag`)
-		verifyEq(url, `/doc/wotever#frag`)
+		uri = linkResolver.resolve(null, `/doc/wotever#frag`)
+		verifyEq(uri, `/doc/wotever#frag`)
 
-		url = linkResolver.resolve(null, `/doc/wotever?query`)
-		verifyEq(url, `/doc/wotever?query`)
+		uri = linkResolver.resolve(null, `/doc/wotever?query`)
+		verifyEq(uri, `/doc/wotever?query`)
 	}
 }

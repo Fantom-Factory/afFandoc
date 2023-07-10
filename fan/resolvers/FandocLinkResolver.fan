@@ -24,9 +24,9 @@ const class FandocLinkResolver : LinkResolver {
 	const Uri	baseUrl			:= `https://fantom.org/doc/`
 	const Str[]	corePodNames	:= "asn1 build compiler compilerDoc compilerJava compilerJs concurrent crypto cryptoJava docDomkit docFanr docIntro docLang docTools dom domkit email fandoc fanr fansh flux fluxText fwt gfx graphics graphicsJava icons inet math sql syntax sys util web webfwt webmod wisp xml yaml".split
 
-	override Uri? resolve(Str? scheme, Uri url) {
+	override Uri? resolve(Str? scheme, Uri uri) {
 		// link to Fantom Types - Damn you Fantom for creating this crappy syntax!
-		if (url.scheme == null || !url.pathStr.startsWith(":"))
+		if (uri.scheme == null || !uri.pathStr.startsWith(":"))
 			return null
 
 		pod  := scheme	// uri.scheme lowercases everything... damn!
@@ -36,9 +36,9 @@ const class FandocLinkResolver : LinkResolver {
 		if (!corePodNames.contains(pod))
 			return null
 		
-		path := url.pathStr[1..-1].split('.')
+		path := uri.pathStr[1..-1].split('.')
 		type := path[0] == "index" || path[0] == "pod-doc" ? "" : path[0]
-		slot := (path.getSafe(1) ?: url.frag) ?: Str.defVal
+		slot := (path.getSafe(1) ?: uri.frag) ?: Str.defVal
 		link := baseUrl.plusSlash + (`${pod}/${type}` + (slot.isEmpty ? `` : `#${slot}`))
 		return link
 	}

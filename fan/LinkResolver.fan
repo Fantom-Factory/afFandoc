@@ -3,11 +3,11 @@
 @Js
 mixin LinkResolver {
 
-	** Resolve the given 'url'.
-	abstract Uri? resolve(Str? scheme, Uri url)
+	** Resolve the given 'uri'.
+	abstract Uri? resolve(Str? scheme, Uri uri)
 
 	** Creates a 'LinkResolver' from the given fn. 
-	static new fromFn(|Str? scheme, Uri url -> Uri?| fn) {
+	static new fromFn(|Str? scheme, Uri uri -> Uri?| fn) {
 		FnLinkResolver(fn)
 	}
 	
@@ -30,35 +30,37 @@ mixin LinkResolver {
 		FandocLinkResolver()
 	}
 	
-	** Returns a basic 'LinkResolver' that just returns the given 'url'. 
+	** Returns a basic 'LinkResolver' that just returns the given 'uri'. 
 	static LinkResolver passThroughResolver() {
-		fromFn() |Str? scheme, Uri url -> Uri?| { url }
+		fromFn() |Str? scheme, Uri uri -> Uri?| { uri }
 	}
 	
-	** Returns a 'LinkResolver' that returns the given 'url' should it be prefixed with a '#'. 
+	** Returns a 'LinkResolver' that returns the given 'uri' should it be prefixed with a '#'. 
 	static LinkResolver idPassThroughResolver() {
-		fromFn() |Str? scheme, Uri url -> Uri?| {
-			url.toStr.startsWith("#") ? url : null
+		fromFn() |Str? scheme, Uri uri -> Uri?| {
+			uri.toStr.startsWith("#") ? uri : null
 		}
 	}
 
-	** Returns a 'LinkResolver' that returns the given 'url' should it be qualified with a 
+	** Returns a 'LinkResolver' that returns the given 'uri' should it be qualified with a 
 	** common scheme such as: 'http', 'https', 'ftp', 'data'. 
 	static LinkResolver schemePassThroughResolver(Str[] schemes := "http https ftp data javascript".split) {
-		fromFn() |Str? scheme, Uri url -> Uri?| {
-			schemes.contains(url.scheme ?: "") ? url : null
+		fromFn() |Str? scheme, Uri uri -> Uri?| {
+			schemes.contains(uri.scheme ?: "") ? uri : null
 		}
 	}
 
-	** Returns a 'LinkResolver' that returns the given 'url' should it be path only and path absolute. 
+	** Returns a 'LinkResolver' that returns the given 'uri' should it be path only and path absolute. 
 	static LinkResolver pathAbsPassThroughResolver() {
-		fromFn() |Str? scheme, Uri url -> Uri?| {
-			url.isRel && url.host == null && url.isPathAbs ? url : null
+		fromFn() |Str? scheme, Uri uri -> Uri?| {
+			uri.isRel && uri.host == null && uri.isPathAbs ? uri : null
 		}
 	}
 	
 	** Returns a 'LinkResolver' that validates CSS links - use in conjunction with 'CssLinkProcessor'.
-	static LinkResolver cssLinkResolver(|Str? scheme, Uri url->Uri?| resolverLinkFn) {
+	** 
+	** The given func just needs to call 'HtmlDocWriter.resolveHref()'.
+	static LinkResolver cssLinkResolver(|Str? scheme, Uri uri->Uri?| resolverLinkFn) {
 		CssLinkResolver(resolverLinkFn)
 	}
 }
@@ -71,8 +73,8 @@ internal class FnLinkResolver : LinkResolver {
 		this.func = func
 	}
 	
-	override Uri? resolve(Str? scheme, Uri url) {
-		func(scheme, url)
+	override Uri? resolve(Str? scheme, Uri uri) {
+		func(scheme, uri)
 	}	
 }
 

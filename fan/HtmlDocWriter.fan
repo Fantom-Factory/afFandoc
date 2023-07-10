@@ -253,7 +253,6 @@ class HtmlDocWriter : DocWriter {
 
 			case DocNodeId.link:
 				link := (Link) elem
-				url  := Uri(link.uri, false)
 				href := resolveLink(html, elem, link.uri)
 				html["href"] = href ?: link.uri
 		

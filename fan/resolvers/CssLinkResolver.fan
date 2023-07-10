@@ -8,8 +8,8 @@ internal class CssLinkResolver : LinkResolver {
 		this.resolverLinkFn = resolverLinkFn
 	}
 	
-	override Uri? resolve(Str? scheme, Uri url) {
-		href := url.toStr
+	override Uri? resolve(Str? scheme, Uri uri) {
+		href := uri.toStr
 		if (href.startsWith(".") == false)
 			return null
 		
@@ -17,7 +17,7 @@ internal class CssLinkResolver : LinkResolver {
 		link := data["text"]?.trimToNull
 		if (link == null)
 			// non-null to ward off the unresolvedLink processor 
-			return url
+			return uri
 
 		// if we have an actual URL, resolve / validate it
 		scheme = link.contains(":")
@@ -26,7 +26,7 @@ internal class CssLinkResolver : LinkResolver {
 		
 		oldUri := Uri(link, false)
 		if (oldUri == null)
-			return url
+			return uri
 
 		newUrl := resolverLinkFn(scheme, oldUri)
 		

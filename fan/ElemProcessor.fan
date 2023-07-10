@@ -17,7 +17,7 @@ mixin ElemProcessor {
 	** Don't forget to *also* use the CssLinkResolver to avoid invalid links.
 	static ElemProcessor cssLinkProcessor() {
 		CssLinkProcessor()
-	}	
+	}
 
 	** A para processor that allows text to be prefixed with CSS class names and styles.
 	static ElemProcessor cssPrefixProcessor() {
