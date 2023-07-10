@@ -137,7 +137,8 @@ class HtmlDocWriter : DocWriter {
 		if (elem.id == DocNodeId.doc)		return
 		
 		// comments are hard coded - its... just easier this way.
-		if (allowComments && elem.toText.startsWith(".//")) {
+		if (allowComments && (elem.id == DocNodeId.para || elem.id == DocNodeId.pre) && elem.toText.startsWith(".//")) {
+			elem.removeAll
 			htmlNode = null
 			return
 		}

@@ -9,5 +9,15 @@ internal class TestCommentProcessor : FandocTest {
 
 		out = write("pre>\ntext\n<pre\n\npre>\n.//syntax: axon\na:b\n<pre")
 		verifyEq(out, """<pre>text\n</pre>""")
+
+		out = write("This is a para with './/' embedded.")
+		verifyEq(out, """<p>This is a para with <code>.//</code> embedded.</p>""")
+
+		// make sure all child node are also removed
+		out = write(".// This is a comment with **bold** text.")
+		verifyEq(out, "")
+
+		out = write(".// This is a comment with [a link]`.link`.")
+		verifyEq(out, "")
 	}
 }
