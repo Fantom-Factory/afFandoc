@@ -106,16 +106,21 @@ class HtmlDocWriter : DocWriter {
 		doc	   := parser.parse(loc ?: "afFandoc", fandoc.in, true)
 		if (parser.errs.size > 0) {
 			lines := fandoc.splitLines
-			msg	  := "Fandoc errors" + (loc == null ? "" : " in ${loc}") + ":\n"
+			msgs  := "Fandoc errors" + (loc == null ? "" : " in ${loc}") + ":\n"
 
 			// prepending errors is too specific to generalise in to afFandoc.
 			parser.errs.eachr |err| {
-				errLine := lines.getSafe(err.line, "").toCode
-				p := Para().add(DocText("${err.msg} (${err.line}) - ")).add(Code().add(DocText(errLine))) { it.admonition = "parseErr" }
+				errLine := lines.getSafe(err.line-1, "").toCode
+				errMsg	:= err.msg
+				// don't add the line num if it's already in the err msg
+				if (errMsg.endsWith(err.line.toStr) == false)
+					errMsg += " (${err.line})"
+				errMsg += " - "
+				p := Para().add(DocText(errMsg)).add(Code().add(DocText(errLine))) { it.admonition = "parseErr" }
 				doc.insert(0, p)
-				msg += " - ${err.msg} (${err.line}) - ${errLine}\n"
+				msgs += " - ${errMsg}${errLine}\n"
 			}
-			log.warn(msg)
+			log.warn(msgs)
 		}
 
 		return doc
