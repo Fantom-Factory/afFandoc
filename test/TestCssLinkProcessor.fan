@@ -13,7 +13,7 @@ internal class TestCssLinkProcessor : FandocTest {
 		out = write("[spanny]`.some.class.{color:red}`")
 		verifyEq(out, """<p><span class="some class" style="color:red">spanny</span></p>""")
 		
-		out = write("[spanny]`.some.class http://dude.com`")
+		out = write("[spanny]`.some.class http://dude.com/`")
 		verifyEq(out, """<p><a href="http://dude.com/" class="some class">spanny</a></p>""")
 
 		out = write("[spanny]`.{color:red} /meh`")

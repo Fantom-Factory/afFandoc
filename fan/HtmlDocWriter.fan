@@ -44,8 +44,8 @@ class HtmlDocWriter : DocWriter {
 				LinkResolver.schemePassThroughResolver,
 				LinkResolver.pathAbsPassThroughResolver,
 				LinkResolver.idPassThroughResolver,
-				LinkResolver.cssLinkResolver |Str? scheme, Uri url -> Uri?| {
-					hdw.linkResolvers.eachWhile { it.resolve(scheme, url) }
+				LinkResolver.cssLinkResolver |Str? scheme, Uri uri -> Uri?| {
+					hdw.resolveHref(scheme, uri)
 				},
 				FandocLinkResolver(),
 				LinkResolver.passThroughResolver,
@@ -272,13 +272,18 @@ class HtmlDocWriter : DocWriter {
 		uri := Uri(url, false)
 		if (uri != null) {
 			scheme := uri.scheme == null ? null : url[0..<uri.scheme.size]
-			res = linkResolvers.eachWhile { it.resolve(scheme, uri) }
+			res = resolveHref(scheme, uri)
 		}
-		
+
 		if (res == null)
 			onUnresolvedLink(html, src, url)
 
 		return res
+	}
+
+	** I can't lie, this is hacky callback hook for use by CssLinkResolver.
+	virtual Uri? resolveHref(Str? scheme, Uri uri) {
+		linkResolvers.eachWhile { it.resolve(scheme, uri) }
 	}
 
 	** Called when a URL could not be resolved.
