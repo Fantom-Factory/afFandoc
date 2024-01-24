@@ -18,6 +18,12 @@ abstract class HtmlNode {
 		return this
 	}
 	
+//	** Like 'add()' except this returns the given node for easy build & assignment.
+//	This append(HtmlNode node) {
+//		add(node)
+//		return node
+//	}
+	
 	This addAll(HtmlNode[] nodes) {
 		nodes.each { this.add(it) }
 		return this
@@ -155,8 +161,8 @@ class HtmlElem : HtmlNode {
 		add(HtmlText(text))
 	}
 	
-	This addHtml(Str text) {
-		add(HtmlText(text, true))
+	This addHtml(Str html) {
+		add(HtmlText(html, true))
 	}
 	
 	** Returns 'true' if this is a 'Void' element.

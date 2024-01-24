@@ -208,13 +208,18 @@ class HtmlDocWriter : DocWriter {
 
 	virtual Obj? processPre(HtmlElem elem, DocElem src) {
 		body	:= elem.text
-		idx		:= body.index("\n") ?: -1
-		cmdTxt	:= body[0..idx].trim
-		cmd 	:= Uri(cmdTxt, false)		
+		idx1	:= body.index("\n") ?: -1
+		idx2	:= body.indexr(":", idx1)	// don't search the entire string, just look at the first line
+		if (idx2 == null) return elem
+
+		line	:= body[0..idx1].trim
+		scheme	:= line[0..<idx2].trimEnd	// make sure to trim tabs before and after the ':'
+		path	:= line[idx2+1..-1]
+		cmdStr	:= scheme + ":" + path
+		cmd 	:= Uri(cmdStr, false)
 
 		if (cmd?.scheme != null && preProcessors.containsKey(cmd.scheme)) {
-			str		:= StrBuf()
-			preText := body[idx..-1]
+			preText := idx1 == -1 ? "" : body[idx1+1..-1]
 			replace	:= preProcessors[cmd.scheme].process(elem, src, cmd, preText)
 			return replace
 		}
