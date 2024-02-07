@@ -214,7 +214,12 @@ class HtmlDocWriter : DocWriter {
 
 		line	:= body[0..idx1].trim
 		scheme	:= line[0..<idx2].trimEnd	// make sure to trim tabs before and after the ':'
-		path	:= line[idx2+1..-1]
+		path	:= line[idx2+1..-1].trimStart
+
+		// some cmds may be "quoted" to help them blend into yaml string values
+		if (path.size >= 2 && path[0] == '"' && path[-1] == '"')
+			path = path[1..<-1]
+
 		cmdStr	:= scheme + ":" + path
 		cmd 	:= Uri(cmdStr, false)
 
