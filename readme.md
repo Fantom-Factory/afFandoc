@@ -1,8 +1,8 @@
-# Fandoc v2.0.6
+# Fandoc v2.1.2
 ---
 
 [![Written in: Fantom](http://img.shields.io/badge/written%20in-Fantom-lightgray.svg)](https://fantom-lang.org/)
-[![pod: v2.0.6](http://img.shields.io/badge/pod-v2.0.6-yellow.svg)](http://eggbox.fantomfactory.org/pods/afFandoc)
+[![pod: v2.1.2](http://img.shields.io/badge/pod-v2.1.2-yellow.svg)](http://eggbox.fantomfactory.org/pods/afFandoc)
 [![Licence: ISC](http://img.shields.io/badge/licence-ISC-blue.svg)](https://choosealicense.com/licenses/isc/)
 
 ## Overview
@@ -27,7 +27,7 @@ Or install `Fandoc` with [fanr](https://fantom.org/doc/docFanr/Tool.html#install
 
 To use in a [Fantom](https://fantom-lang.org/) project, add a dependency to `build.fan`:
 
-    depends = ["sys 1.0", ..., "afFandoc 2.0"]
+    depends = ["sys 1.0", ..., "afFandoc 2.1"]
 
 ## <a name="documentation"></a>Documentation
 
