@@ -5,7 +5,7 @@ class Build : BuildPod {
     new make() {
         podName = "afFandoc"
         summary = "Intelligent and extensible Fandoc writers"
-        version = Version("2.1.2")
+        version = Version("2.1.4")
 
         meta = [
             "pod.dis"       : "Fandoc",
