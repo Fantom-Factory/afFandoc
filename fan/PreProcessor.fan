@@ -4,7 +4,7 @@ using fandoc::DocElem
 @Js
 mixin PreProcessor {
 
-	** Implement to process the given 'pre' text to the given 'out'. 
+	** Implement to process the given 'pre' text, and optionally return a replacement 'HtmlElem' or 'Str'. 
 	abstract Obj? process(HtmlElem elem, DocElem src, Uri cmd, Str text)
 	
 	** Creates a 'PreProcessor' from the given fn. 

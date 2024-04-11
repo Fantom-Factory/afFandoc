@@ -20,6 +20,7 @@ class HtmlDocWriter : DocWriter {
 	ElemProcessor[]		imageProcessors				:= ElemProcessor[,]
 	ElemProcessor[]		paraProcessors				:= ElemProcessor[,]
 	Str:PreProcessor	preProcessors				:= Str:PreProcessor[:]
+	DocProcessor[]		docProcessors				:= DocProcessor[,]
 	Bool				allowComments				:= true
 	protected StrBuf	str							:= StrBuf()
 	protected HtmlNode?	htmlNode
@@ -81,12 +82,19 @@ class HtmlDocWriter : DocWriter {
 		olds := str
 		oldn := htmlNode
 		buf  := StrBuf()
-		str   = buf
-		htmlNode = null
+		this.str		= buf
+		this.htmlNode	= null
 		elem.write(this)
-		str   = olds
-		htmlNode = oldn
-		return buf.toStr
+		html := buf.toStr
+		
+		docProcessors.each {
+			res := it.process(this.htmlNode, elem, html)
+			html = res?.toStr ?: html
+		}
+
+		this.str		= olds
+		this.htmlNode	= oldn
+		return html
 	}
 
 	** Writes the given fandoc to a string.
